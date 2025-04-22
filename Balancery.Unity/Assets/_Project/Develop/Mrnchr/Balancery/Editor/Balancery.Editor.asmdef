@@ -1,0 +1,26 @@
+{
+    "name": "Balancery.Editor",
+    "rootNamespace": "Mrnchr.Balancery.Editor",
+    "references": [
+        "GUID:6bd3a16bff0a80c4ebdd5a29658eee76",
+        "GUID:324caed91501a9c47a04ebfd87b68794"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UNITY_EDITOR",
+        "BALANCERY"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.unity.ml-agents",
+            "expression": "3.0.0",
+            "define": "ML_AGENTS_3_0_0"
+        }
+    ],
+    "noEngineReferences": false
+}
