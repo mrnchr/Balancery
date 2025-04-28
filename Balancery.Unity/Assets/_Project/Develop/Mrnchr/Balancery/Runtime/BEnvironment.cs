@@ -8,6 +8,8 @@ namespace Mrnchr.Balancery.Runtime
     private readonly Dictionary<BAgent, bool> _endEpisodeFlags = new Dictionary<BAgent, bool>();
     private BAgent[] _agents;
     public BAcademy Academy { get; set; }
+    
+    public BAgent[] Agents => _agents;
 
     private void Awake()
     {
@@ -16,6 +18,8 @@ namespace Mrnchr.Balancery.Runtime
       {
         agent.Environment = this;
       }
+      
+      InitializeFlags();
     }
 
     public void EndEpisode(BAgent agent)
@@ -35,7 +39,19 @@ namespace Mrnchr.Balancery.Runtime
       }
       
       if (allAgentsEndedEpisode)
+      {
         Academy.CompleteEpisode(this);
+        InitializeFlags();
+      }
+    }
+
+    private void InitializeFlags()
+    {
+      _endEpisodeFlags.Clear();
+      foreach (BAgent agent in _agents)
+      {
+        _endEpisodeFlags.Add(agent, false);
+      }
     }
   }
 }

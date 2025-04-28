@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "com.codewriter.triinspector": "https://github.com/codewriter-packages/Tri-Inspector.git",
+    "com.github-glitchenzo.nugetforunity": "https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity",
     "com.unity.feature.development": "1.0.2",
     "com.unity.localization": "https://github.com/codewriter-packages/Unity-Localization-Stub-for-Tri-Inspector.git",
     "com.unity.ml-agents": "https://github.com/Unity-Technologies/ml-agents.git?path=/com.unity.ml-agents#latest_release",
