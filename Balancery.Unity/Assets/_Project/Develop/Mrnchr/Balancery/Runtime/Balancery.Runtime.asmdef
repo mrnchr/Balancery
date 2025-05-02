@@ -1,6 +1,6 @@
 {
     "name": "Balancery.Runtime",
-    "rootNamespace": "Mrnchr.Balancery.Runtime",
+    "rootNamespace": "",
     "references": [
         "GUID:85e0054f8e64b47309646d35f8851f81",
         "GUID:324caed91501a9c47a04ebfd87b68794"

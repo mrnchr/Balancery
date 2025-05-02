@@ -9,6 +9,13 @@
       },
       "hash": "1921fb03fe903a64f9244106f3152c41404c2fc5"
     },
+    "com.github-glitchenzo.nugetforunity": {
+      "version": "https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "fe31ad0904abee296b5ea72c6073157accba59e8"
+    },
     "com.unity.burst": {
       "version": "1.8.17",
       "depth": 2,

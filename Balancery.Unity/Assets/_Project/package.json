@@ -1,0 +1,11 @@
+{
+  "name": "com.mrcnrh.balancery",
+  "displayName": "Balancery",
+  "version": "0.0.1",
+  "unity": "2023.2",
+  "description": "Automatic step-by-step strategy testing tools.",
+  "keywords": [
+    "balancery",
+    "testing"
+  ]
+}

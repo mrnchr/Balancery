@@ -1,6 +1,6 @@
 {
     "name": "Balancery.Editor",
-    "rootNamespace": "Mrnchr.Balancery.Editor",
+    "rootNamespace": "",
     "references": [
         "GUID:6bd3a16bff0a80c4ebdd5a29658eee76",
         "GUID:324caed91501a9c47a04ebfd87b68794"
