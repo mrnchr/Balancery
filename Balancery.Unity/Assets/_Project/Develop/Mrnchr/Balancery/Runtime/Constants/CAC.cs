@@ -1,7 +1,7 @@
 ﻿namespace Mrnchr.Balancery.Runtime
 {
   /// <summary>
-  /// CreateAssetMenu constants
+  /// Create Asset Menu Constants
   /// </summary>
   public static class CAC
   {
