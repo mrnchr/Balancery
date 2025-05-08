@@ -11,16 +11,79 @@ namespace Mrnchr.Balancery.Runtime.Statistics
 {
   public class StatisticsAnalyzer
   {
+    private readonly Dictionary<string, float> _averages = new Dictionary<string, float>();
+    private readonly Dictionary<string, List<float>> _verticalData = new Dictionary<string, List<float>>();
+    private readonly Dictionary<string, Dictionary<float, float>> _ratios = new Dictionary<string, Dictionary<float, float>>();
+    private readonly Dictionary<string, MetricData> _metrics;
+    private readonly List<Dictionary<string, float>> _horizontalData;
     private readonly DataTable _dataTable;
-    private readonly List<MetricData> _metrics;
-    private List<Dictionary<string, float>> _matchData;
 
-    public StatisticsAnalyzer(List<MetricData> userMetrics, List<Dictionary<string, float>> matchData)
+    public StatisticsAnalyzer(List<MetricData> userMetrics, List<Dictionary<string, float>> horizontalData)
     {
-      _dataTable = ConvertToDataTable(matchData);
+      _horizontalData = horizontalData;
+      foreach (Dictionary<string, float> entry in horizontalData)
+      {
+        foreach (KeyValuePair<string, float> pair in entry)
+        {
+          if (!_verticalData.TryAdd(pair.Key, new List<float>()))
+            _verticalData[pair.Key].Add(pair.Value);
+        }
+      }
+
+      _dataTable = ConvertToDataTable(horizontalData);
+      _metrics = userMetrics.ToDictionary(x => x.Id, x => x);
     }
 
-    public void GenerateClusterStatistics(int numberOfClusters)
+    public void GenerateStatistics(int numberOfClusters)
+    {
+      CalculateAverage();
+
+      _ratios.Clear();
+      foreach (KeyValuePair<string, List<float>> pair in _verticalData)
+      {
+        if(!_metrics.TryGetValue(pair.Key, out MetricData metric) || !metric.CalculateRatio) 
+          continue;
+        
+        _ratios.TryAdd(pair.Key, new Dictionary<float, float>());
+        float unitRatio = 1f / pair.Value.Count;
+        foreach (float value in pair.Value)
+        {
+          if (!_ratios[pair.Key].TryAdd(value, unitRatio))
+            _ratios[pair.Key][value] += unitRatio;
+        }
+      }
+
+      KMeansClusterCollection clusters = GenerateClusters(numberOfClusters, out Dictionary<int, Dictionary<string, float>> clusterStats);
+
+      Debug.Log($"Средние значения матчей:");
+      foreach (KeyValuePair<string, float> average in _averages)
+      {
+        Debug.Log($"  average_{average.Key}: {average.Value:F2}");
+      }
+      
+      Debug.Log($"Доли значений матчей:");
+      foreach (KeyValuePair<string, Dictionary<float, float>> ratio in _ratios)
+      {
+        Debug.Log($"  ratio_{ratio.Key}:");
+        foreach (KeyValuePair<float, float> entry in ratio.Value)
+        {
+          Debug.Log($"    {entry.Key:F2}: {entry.Value:F2}");
+        }
+      }
+
+      Debug.Log($"Кластеризация завершена. Найдено {clusters.Count} кластеров:");
+      foreach (KeyValuePair<int, Dictionary<string, float>> cluster in clusterStats)
+      {
+        Debug.Log($"Кластер {cluster.Key}:");
+        Debug.Log($"  Количество матчей: {cluster.Value["Count"]}");
+        foreach (DataColumn column in _dataTable.Columns)
+        {
+          Debug.Log($"  {column.ColumnName}: {cluster.Value[column.ColumnName]:F2}");
+        }
+      }
+    }
+
+    private KMeansClusterCollection GenerateClusters(int numberOfClusters, out Dictionary<int, Dictionary<string, float>> clusterStats)
     {
       var codebook = new Codification(_dataTable);
       DataTable normalizedData = codebook.Apply(_dataTable);
@@ -37,7 +100,7 @@ namespace Mrnchr.Balancery.Runtime.Statistics
 
       int[] labels = clusters.Decide(data);
 
-      var clusterStats = new Dictionary<int, Dictionary<string, float>>();
+      clusterStats = new Dictionary<int, Dictionary<string, float>>();
       for (int i = 0; i < data.Length; i++)
       {
         int clusterId = labels[i];
@@ -55,7 +118,7 @@ namespace Mrnchr.Balancery.Runtime.Statistics
 
         foreach (DataColumn column in _dataTable.Columns)
         {
-          entry[column.ColumnName] += (float) _dataTable.Rows[i][column.ColumnName];
+          entry[column.ColumnName] += (float)_dataTable.Rows[i][column.ColumnName];
         }
 
         entry["Count"] += 1;
@@ -70,15 +133,18 @@ namespace Mrnchr.Balancery.Runtime.Statistics
         }
       }
 
-      Debug.Log($"Кластеризация завершена. Найдено {clusters.Count} кластеров:");
-      foreach (KeyValuePair<int, Dictionary<string, float>> cluster in clusterStats)
+      return clusters;
+    }
+
+    private void CalculateAverage()
+    {
+      _averages.Clear();
+      foreach (KeyValuePair<string, List<float>> pair in _verticalData)
       {
-        Debug.Log($"Кластер {cluster.Key}:");
-        Debug.Log($"  Количество матчей: {cluster.Value["Count"]}");
-        foreach (DataColumn column in _dataTable.Columns)
-        {
-          Debug.Log($"  {column.ColumnName}: {cluster.Value[column.ColumnName]:F2}");
-        }
+        if (!_metrics.TryGetValue(pair.Key, out MetricData metric) || !metric.CalculateAverage)
+          continue;
+
+        _averages.Add(pair.Key, pair.Value.Average());
       }
     }
 

@@ -44,7 +44,7 @@ namespace Mrnchr.Balancery.Runtime
           Destroy(environment.gameObject);
 
         StatisticsAnalyzer analyzer = new StatisticsAnalyzer(MetricsMap.Metrics, StatisticsCollector.Statistics);
-        analyzer.GenerateClusterStatistics(2);
+        analyzer.GenerateStatistics(3);
         
         _environments.Clear();
         _simulationCount = 0;
