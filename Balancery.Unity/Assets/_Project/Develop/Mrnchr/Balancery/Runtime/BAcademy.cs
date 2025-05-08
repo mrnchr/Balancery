@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Mrnchr.Balancery.Runtime.Statistics;
+using Mrnchr.Balancery.Runtime.Statistics.Configuration;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -11,6 +12,7 @@ namespace Mrnchr.Balancery.Runtime
     private int _simulationCount;
     
     public BAcademySettings Settings;
+    public MetricsConfig MetricsMap;
 
     public UnityAction<BEnvironment> OnEpisodeComplete;
     
@@ -41,7 +43,7 @@ namespace Mrnchr.Balancery.Runtime
         foreach (var environment in _environments)
           Destroy(environment.gameObject);
 
-        StatisticsAnalyzer analyzer = new StatisticsAnalyzer(StatisticsCollector.Statistics);
+        StatisticsAnalyzer analyzer = new StatisticsAnalyzer(MetricsMap.Metrics, StatisticsCollector.Statistics);
         analyzer.GenerateClusterStatistics(2);
         
         _environments.Clear();

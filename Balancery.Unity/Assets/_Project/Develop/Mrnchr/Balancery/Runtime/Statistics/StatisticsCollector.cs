@@ -15,9 +15,9 @@ namespace Mrnchr.Balancery.Runtime.Statistics
       Statistics.Add(new Dictionary<string, float>());
     }
 
-    public void AddStatisticsItem(string key, float value)
+    public void AddStatisticsItem(string metricId, float value)
     {
-      Statistics[^1][key] = value;
+      Statistics[^1][metricId] = value;
     }
   }
 }

@@ -4,16 +4,18 @@ using System.Linq;
 using Accord.MachineLearning;
 using Accord.Math;
 using Accord.Statistics.Filters;
-using Debug = UnityEngine.Debug;
+using Mrnchr.Balancery.Runtime.Statistics.Configuration;
+using UnityEngine;
 
 namespace Mrnchr.Balancery.Runtime.Statistics
 {
   public class StatisticsAnalyzer
   {
     private readonly DataTable _dataTable;
+    private readonly List<MetricData> _metrics;
     private List<Dictionary<string, float>> _matchData;
 
-    public StatisticsAnalyzer(List<Dictionary<string, float>> matchData)
+    public StatisticsAnalyzer(List<MetricData> userMetrics, List<Dictionary<string, float>> matchData)
     {
       _dataTable = ConvertToDataTable(matchData);
     }
