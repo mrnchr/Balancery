@@ -12,6 +12,8 @@ namespace Mrnchr.Balancery.Statistics
     private readonly StatisticsDatabaseConnection _connection;
     private readonly SessionMetricData _cacheSessionMetric;
     private readonly TurnMetricData _cacheTurnMetric;
+    private readonly ActionData _cacheAction;
+    private readonly StartOptionData _cacheStartOption;
 
     public DatabaseProvider(DataOptions options)
     {
@@ -19,6 +21,8 @@ namespace Mrnchr.Balancery.Statistics
       _connection = new StatisticsDatabaseConnection(_options);
       _cacheSessionMetric = new SessionMetricData();
       _cacheTurnMetric = new TurnMetricData();
+      _cacheAction = new ActionData();
+      _cacheStartOption = new StartOptionData();
     }
 
     public void Dispose()
@@ -38,19 +42,7 @@ namespace Mrnchr.Balancery.Statistics
       _cacheSessionMetric.MetricName = metricName;
       _cacheSessionMetric.MetricValue = value;
 
-      if (_connection.SessionMetricTable.Any(x => x.SessionNumber == sessionNumber && x.MetricName == metricName))
-      {
-        _connection.Update(_cacheSessionMetric);
-      }
-      else
-      {
-        _connection.SessionMetricTable.Insert(() => new SessionMetricData
-        {
-          SessionNumber = sessionNumber,
-          MetricName = metricName,
-          MetricValue = value
-        });
-      }
+      _connection.InsertOrReplace(_cacheSessionMetric);
     }
 
     public void RecordMetricValueToTurn(int sessionNumber, int turnNumber, string metricName, float value)
@@ -60,21 +52,26 @@ namespace Mrnchr.Balancery.Statistics
       _cacheTurnMetric.MetricName = metricName;
       _cacheTurnMetric.MetricValue = value;
 
-      if (_connection.TurnMetricTable.Any(x =>
-        x.SessionNumber == sessionNumber && x.TurnNumber == turnNumber && x.MetricName == metricName))
-      {
-        _connection.Update(_cacheTurnMetric);
-      }
-      else
-      {
-        _connection.TurnMetricTable.Insert(() => new TurnMetricData
-        {
-          SessionNumber = sessionNumber,
-          TurnNumber = turnNumber,
-          MetricName = metricName,
-          MetricValue = value
-        });
-      }
+      _connection.InsertOrReplace(_cacheTurnMetric);
+    }
+
+    public void RecordActionValue(int sessionNumber, int turnNumber, int actionIndex, float value)
+    {
+      _cacheAction.SessionNumber = sessionNumber;
+      _cacheAction.TurnNumber = turnNumber;
+      _cacheAction.ActionIndex = actionIndex;
+      _cacheAction.ActionValue = value;
+
+      _connection.InsertOrReplace(_cacheAction);
+    }
+
+    public void RecordOptionValue(int sessionNumber, string optionName, float value)
+    {
+      _cacheStartOption.SessionNumber = sessionNumber;
+      _cacheStartOption.OptionName = optionName;
+      _cacheStartOption.OptionValue = value;
+      
+      _connection.InsertOrReplace(_cacheStartOption);
     }
   }
 }

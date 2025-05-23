@@ -90,6 +90,7 @@ namespace Mrnchr.Balancery.Statistics.Testing
       // Assert.
       Assert.DoesNotThrow(() => dbProvider.RecordMetricValue(1, "key", 1));
       Assert.DoesNotThrow(() => dbProvider.RecordMetricValue(1, "key2", 1));
+      Assert.DoesNotThrow(() => dbProvider.RecordActionValue(2, 3, 2, 1));
 
       dbProvider.Dispose();
       if (!string.IsNullOrWhiteSpace(databasePath))

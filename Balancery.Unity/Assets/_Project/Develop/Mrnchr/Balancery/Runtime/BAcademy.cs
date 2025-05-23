@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Mrnchr.Balancery.Runtime.Statistics.Configuration;
+using Unity.MLAgents.Actuators;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -8,12 +9,17 @@ namespace Mrnchr.Balancery.Runtime
   public class BAcademy : MonoBehaviour
   {
     private readonly List<BEnvironment> _environments = new List<BEnvironment>();
-    private int _simulationCount;
+    private int _startSimulationCount;
+    private int _endSimulationCount;
 
     public BAcademySettings Settings;
     public MetricsConfig MetricsMap;
 
     public UnityAction<BEnvironment> OnEpisodeComplete;
+
+    public StatisticsBridge Statistics { get; set; }
+
+    public int StartSimulationCount => _startSimulationCount;
 
     private void Start()
     {
@@ -22,26 +28,40 @@ namespace Mrnchr.Balancery.Runtime
         var environment = Instantiate(Settings.EnvironmentPrefab);
         environment.Academy = this;
         _environments.Add(environment);
+        environment.SessionIndex = _startSimulationCount++;
       }
     }
 
     public void CompleteEpisode(BEnvironment environment)
     {
-      _simulationCount++;
       OnEpisodeComplete?.Invoke(environment);
+      _endSimulationCount++;
+      _startSimulationCount++;
 
       CheckAllSimulationsComplete();
     }
 
     private void CheckAllSimulationsComplete()
     {
-      if (_simulationCount >= Settings.NumberOfSimulations)
+      if (_endSimulationCount >= Settings.NumberOfSimulations)
       {
         foreach (var environment in _environments)
           Destroy(environment.gameObject);
 
         _environments.Clear();
-        _simulationCount = 0;
+        _endSimulationCount = 0;
+      }
+    }
+
+    public void RecordActions(BAgent agent, ActionBuffers actions)
+    {
+      if (Statistics != null)
+      {
+        for (int i = 0; i < actions.ContinuousActions.Length + actions.DiscreteActions.Length; i++)
+        {
+          float value = i < actions.ContinuousActions.Length ? actions.ContinuousActions[i] : actions.DiscreteActions[i];
+          Statistics.RecordActionValue(agent.Environment.SessionIndex, agent.Environment.TurnIndex, i, value);
+        }
       }
     }
   }

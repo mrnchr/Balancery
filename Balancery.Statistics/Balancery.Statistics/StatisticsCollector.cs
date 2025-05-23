@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Mrnchr.Balancery.Statistics
 {
@@ -8,33 +7,29 @@ namespace Mrnchr.Balancery.Statistics
   {
     private readonly IDatabaseProvider _dbProvider;
     
-    private int _sessionCounter;
-    private int _turnCounter;
-    
     public StatisticsCollector(IDatabaseProvider dbProvider)
     {
       _dbProvider = dbProvider;
     }
 
-    public void NextSession()
+    public void RecordMetricValue(int sessionIndex, string metricId, float value)
     {
-      _sessionCounter++;
-      _turnCounter = 0;
+      _dbProvider.RecordMetricValue(sessionIndex, metricId, value);
     }
 
-    public void NextTurn()
+    public void RecordMetricValueToTurn(int sessionIndex, int turnIndex, string metricId, float value)
     {
-      _turnCounter++;
+      _dbProvider.RecordMetricValueToTurn(sessionIndex, turnIndex, metricId, value);
     }
 
-    public void RecordMetricValue(string metricId, float value)
+    public void RecordActionValue(int sessionIndex, int turnIndex, int actionIndex, float value)
     {
-      _dbProvider.RecordMetricValue(_sessionCounter, metricId, value);
+      _dbProvider.RecordActionValue(sessionIndex, turnIndex, actionIndex, value);
     }
 
-    public void RecordMetricValueToTurn(string metricId, float value)
+    public void RecordOptionValue(int sessionIndex, string optionId, float value)
     {
-      _dbProvider.RecordMetricValueToTurn(_sessionCounter, _turnCounter, metricId, value);
+      _dbProvider.RecordOptionValue(sessionIndex, optionId, value);
     }
   }
 }
