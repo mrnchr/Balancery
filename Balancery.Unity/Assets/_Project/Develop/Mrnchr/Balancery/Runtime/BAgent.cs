@@ -7,14 +7,17 @@ namespace Mrnchr.Balancery.Runtime
   public class BAgent : Agent
   {
     public BEnvironment Environment { get; set; }
-    
+
     [NonSerialized]
     public bool WasFirstEpisodeStarted;
+
+    public bool WaitMadeTurn;
 
     public sealed override void OnEpisodeBegin()
     {
       if (WasFirstEpisodeStarted)
       {
+        WaitMadeTurn = false;
         OnEpisodeEnded();
         Environment.EndEpisode(this);
       }
@@ -24,7 +27,17 @@ namespace Mrnchr.Balancery.Runtime
       OnEpisodeStarted();
     }
 
-    public override void OnActionReceived(ActionBuffers actions)
+    public sealed override void OnActionReceived(ActionBuffers actions)
+    {
+      Environment.Academy.RecordActions(this, actions);
+      WaitMadeTurn = true;
+      OnActionExecuted(actions);
+
+      if (WaitMadeTurn)
+        Environment.MakeTurn(this);
+    }
+
+    public virtual void OnActionExecuted(ActionBuffers actions)
     {
       SetReward(0);
       EndEpisode();

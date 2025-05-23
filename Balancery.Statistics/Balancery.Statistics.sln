@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Balancery.Statistics", "Balancery.Statistics\Balancery.Statistics.csproj", "{1C19B22D-C673-45E2-B564-02DEF8538786}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Balancery.Statistics.Testing", "Balancery.Statistics.Testing\Balancery.Statistics.Testing.csproj", "{0B5CB1B6-78EE-4EB8-9A76-5800EF848C14}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1C19B22D-C673-45E2-B564-02DEF8538786}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C19B22D-C673-45E2-B564-02DEF8538786}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C19B22D-C673-45E2-B564-02DEF8538786}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C19B22D-C673-45E2-B564-02DEF8538786}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B5CB1B6-78EE-4EB8-9A76-5800EF848C14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B5CB1B6-78EE-4EB8-9A76-5800EF848C14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B5CB1B6-78EE-4EB8-9A76-5800EF848C14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B5CB1B6-78EE-4EB8-9A76-5800EF848C14}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
