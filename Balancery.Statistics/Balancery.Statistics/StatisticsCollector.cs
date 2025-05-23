@@ -1,4 +1,5 @@
 ﻿using System;
+using Mrnchr.Balancery.Statistics.Database;
 
 namespace Mrnchr.Balancery.Statistics
 {
