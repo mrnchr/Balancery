@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using LinqToDB;
+using Mrnchr.Balancery.Statistics.Database;
+using Mrnchr.Balancery.Statistics.Export;
 
 namespace Mrnchr.Balancery.Statistics
 {
@@ -9,9 +11,12 @@ namespace Mrnchr.Balancery.Statistics
     private readonly IBalanceryStatisticsConfig _config;
     private readonly IDatabaseProvider _dbProvider;
     private readonly StatisticsCollector _collector;
+    private readonly XLSXExporter _exporter;
 
     public IBalanceryStatisticsConfig Config => _config;
     public StatisticsCollector Collector => _collector;
+    
+    public IDatabaseProvider DbProvider => _dbProvider;
 
     public BalanceryStatistics(IBalanceryStatisticsConfig config)
     {
@@ -24,6 +29,7 @@ namespace Mrnchr.Balancery.Statistics
         .UseSQLite($"Data Source = {Path.Combine(_config.DatabasePath, _config.DatabaseName)}; Foreign Keys = True"));
       
       _collector = new StatisticsCollector(_dbProvider);
+      _exporter = new XLSXExporter(_dbProvider);
     }
 
     public BalanceryStatistics(IBalanceryStatisticsConfig config, IDatabaseProvider dbProvider)
@@ -31,6 +37,12 @@ namespace Mrnchr.Balancery.Statistics
       _config = config;
       _dbProvider = dbProvider;
       _collector = new StatisticsCollector(_dbProvider);
+      _exporter = new XLSXExporter(_dbProvider);
+    }
+
+    public void Export()
+    {
+      _exporter.Export(_config.ExportFileTemplatePath, _config.ExportFilePath, _config.ExportFileName);
     }
 
     public void Dispose()

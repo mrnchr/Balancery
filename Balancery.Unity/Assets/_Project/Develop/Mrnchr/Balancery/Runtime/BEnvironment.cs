@@ -56,8 +56,6 @@ namespace Mrnchr.Balancery.Runtime
     {
       _makeTurnFlags[agent] = true;
       TurnIndex++;
-      
-      Debug.Log($"{TurnIndex} : {agent.gameObject.name}  Make turn");
 
       CheckAllAgentsMadeTurn();
     }

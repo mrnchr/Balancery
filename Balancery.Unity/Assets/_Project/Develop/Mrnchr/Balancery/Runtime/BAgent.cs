@@ -30,6 +30,10 @@ namespace Mrnchr.Balancery.Runtime
     public sealed override void OnActionReceived(ActionBuffers actions)
     {
       Environment.Academy.RecordActions(this, actions);
+
+      if (BAcademy.IsRepetition)
+        Environment.Academy.ActionProvider.InsertActions(Environment.SessionIndex, Environment.TurnIndex, ref actions);
+      
       WaitMadeTurn = true;
       OnActionExecuted(actions);
 
