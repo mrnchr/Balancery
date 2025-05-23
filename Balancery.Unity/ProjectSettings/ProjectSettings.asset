@@ -653,7 +653,7 @@ PlayerSettings:
   webGLWebAssemblyBigInt: 0
   webGLCloseOnQuit: 0
   scriptingDefineSymbols:
-    Standalone: BALANCERY
+    Standalone: BALANCERY;BALANCERY_STATISTICS
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:

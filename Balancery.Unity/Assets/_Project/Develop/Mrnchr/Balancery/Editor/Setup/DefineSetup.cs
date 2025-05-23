@@ -9,6 +9,7 @@ namespace Mrnchr.Balancery.Editor.Setup
   public static class DefineSetup
   {
     private const string PROJECT_DEFINE = "BALANCERY";
+    private const string STATISTICS_DEFINE = "BALANCERY_STATISTICS";
     
     [MenuItem(MIC.PROJECT_TOOLS_MENU + "Enable Balancery")]
     public static void EnableBalanceryDefine()
@@ -20,6 +21,18 @@ namespace Mrnchr.Balancery.Editor.Setup
     public static void DisableBalanceryDefine()
     {
       RemoveProjectDefine(PROJECT_DEFINE);
+    }
+    
+    [MenuItem(MIC.PROJECT_TOOLS_MENU + "Enable Balancery Statistics")]
+    public static void EnableBalanceryStatisticsDefine()
+    {
+      AddProjectDefine(STATISTICS_DEFINE);
+    }
+
+    [MenuItem(MIC.PROJECT_TOOLS_MENU + "Disable Balancery Statistics")]
+    public static void DisableBalanceryStatisticsDefine()
+    {
+      RemoveProjectDefine(STATISTICS_DEFINE);
     }
 
     private static void AddProjectDefine(string id)

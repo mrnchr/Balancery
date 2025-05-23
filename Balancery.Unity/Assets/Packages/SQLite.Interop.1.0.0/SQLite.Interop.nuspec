@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>SQLite.Interop</id>
+        <version>1.0.0</version>
+        <authors>Administrator</authors>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>SQLite.Interop.dll (x86)</description>
+    </metadata>
+</package>
