@@ -131,7 +131,7 @@ namespace Mrnchr.Balancery.Runtime.Academy
         agent.FinishEpisode();
 
       TurnIndex = 0;
-      SessionIndex = Academy.StartSimulationCount;
+      SessionIndex = Academy.StartedSimulationCount;
       InitializeFlags(_finishEpisodeFlags);
     }
 

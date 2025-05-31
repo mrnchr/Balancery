@@ -8,8 +8,8 @@ namespace Mrnchr.Balancery.Statistics.Database
 {
   public class DatabaseProvider : IDatabaseProvider
   {
-    private const string COLUMN_SESSION_NAME = "SessionNumber";
-    private const string COLUMN_TURN_NAME = "TurnNumber";
+    private const string COLUMN_SESSION_NAME = "Session Number";
+    private const string COLUMN_TURN_NAME = "Turn Number";
     
     private readonly DataOptions _options;
     private readonly StatisticsDatabaseConnection _connection;
@@ -77,6 +77,34 @@ namespace Mrnchr.Balancery.Statistics.Database
       _cacheStartOption.OptionValue = value;
 
       _connection.InsertOrReplace(_cacheStartOption);
+    }
+
+    public List<float> GetActions(int sessionIndex, int turnIndex)
+    {
+      return Connection.ActionTable
+        .Where(x => x.SessionNumber == sessionIndex && x.TurnNumber == turnIndex)
+        .OrderBy(x => x.TurnNumber)
+        .ThenBy(x => x.ActionIndex)
+        .Select(x => x.ActionValue)
+        .ToList();
+    }
+
+    public void ReplaceSessionNumber(int oldSessionNumber, int newSessionNumber)
+    {
+      _connection.SessionMetricTable.Where(x => x.SessionNumber == oldSessionNumber)
+        .Set(x => x.SessionNumber, newSessionNumber).Update();
+      _connection.TurnMetricTable.Where(x => x.SessionNumber == oldSessionNumber)
+        .Set(x => x.SessionNumber, newSessionNumber).Update();
+      _connection.ActionTable.Where(x => x.SessionNumber == oldSessionNumber)
+        .Set(x => x.SessionNumber, newSessionNumber).Update();
+    }
+
+    public void RemoveSession(int sessionNumber)
+    {
+      _connection.SessionMetricTable.Where(x => x.SessionNumber == sessionNumber).Delete();
+      _connection.TurnMetricTable.Where(x => x.SessionNumber == sessionNumber).Delete();
+      _connection.ActionTable.Where(x => x.SessionNumber == sessionNumber).Delete();
+      _connection.StartOptionTable.Where(x => x.SessionNumber == sessionNumber).Delete();
     }
 
     public DataTable GetMetricsTable()

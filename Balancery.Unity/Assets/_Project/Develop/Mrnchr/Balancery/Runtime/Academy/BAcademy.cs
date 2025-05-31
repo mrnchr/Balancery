@@ -13,8 +13,9 @@ namespace Mrnchr.Balancery.Runtime.Academy
   public class BAcademy : MonoBehaviour
   {
     private readonly List<BEnvironment> _environments = new List<BEnvironment>();
-    private int _startSimulationCount;
-    private int _endSimulationCount;
+    private readonly List<int> _completedEpisodes = new List<int>();
+    private int _startedSimulationCount;
+    private int _completedSimulationCount;
 
     public BAcademySettings Settings;
     public BalanceryStatisticsConfigAsset StatisticsConfig;
@@ -24,7 +25,7 @@ namespace Mrnchr.Balancery.Runtime.Academy
     public StatisticsBridge Statistics { get; set; }
     public IActionProvider ActionProvider { get; set; }
 
-    public int StartSimulationCount => _startSimulationCount;
+    public int StartedSimulationCount => _startedSimulationCount;
 
     private void Awake()
     {
@@ -57,7 +58,7 @@ namespace Mrnchr.Balancery.Runtime.Academy
         BEnvironment environment = Instantiate(Settings.EnvironmentPrefab);
         environment.Academy = this;
         _environments.Add(environment);
-        environment.SessionIndex = _startSimulationCount++;
+        environment.SessionIndex = _startedSimulationCount++;
       }
     }
 
@@ -69,21 +70,33 @@ namespace Mrnchr.Balancery.Runtime.Academy
     public void CompleteEpisode(BEnvironment environment)
     {
       OnEpisodeComplete?.Invoke(environment);
-      _endSimulationCount++;
-      _startSimulationCount++;
+      _completedEpisodes.Add(environment.SessionIndex);
+      _completedSimulationCount++;
+      _startedSimulationCount++;
 
       CheckAllSimulationsComplete();
     }
 
     private void CheckAllSimulationsComplete()
     {
-      if (!RepetitionPlayer.IsRepetition && _endSimulationCount >= Settings.NumberOfSimulations)
+      if (!RepetitionPlayer.IsRepetition && _completedSimulationCount >= Settings.NumberOfSimulations)
       {
         foreach (var environment in _environments)
           Destroy(environment.gameObject);
 
         _environments.Clear();
-        _endSimulationCount = 0;
+        _completedSimulationCount = 0;
+
+        int k = 0;
+        for (int i = 0; i < _startedSimulationCount; i++)
+        {
+          if (!_completedEpisodes.Contains(i))
+            Statistics.RemoveSession(i);
+          else if (i != k)
+            Statistics.ReplaceSessionNumber(i, k++);
+          else
+            k++;
+        }
 
         Statistics.Export();
       }
