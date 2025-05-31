@@ -1,24 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.IO;
 using Mrnchr.Balancery.Runtime.Repetition;
+using Mrnchr.Balancery.Runtime.Statistics;
 using Mrnchr.Balancery.Runtime.Statistics.Configuration;
 using Mrnchr.Balancery.Statistics;
 using Unity.MLAgents.Actuators;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Mrnchr.Balancery.Runtime
+namespace Mrnchr.Balancery.Runtime.Academy
 {
   public class BAcademy : MonoBehaviour
   {
-    public static bool IsRepetition;
-    
     private readonly List<BEnvironment> _environments = new List<BEnvironment>();
     private int _startSimulationCount;
     private int _endSimulationCount;
 
     public BAcademySettings Settings;
-    public MetricsConfig MetricsMap;
     public BalanceryStatisticsConfigAsset StatisticsConfig;
 
     public UnityAction<BEnvironment> OnEpisodeComplete;
@@ -32,24 +30,40 @@ namespace Mrnchr.Balancery.Runtime
     {
 #if BALANCERY_STATISTICS
       IBalanceryStatisticsConfig rawConfig = StatisticsConfig.CreateConfig();
-      Statistics = new StatisticsBridge(new BalanceryStatistics(rawConfig));
-      Statistics.IsRepetition = IsRepetition;
+      if (RepetitionPlayer.IsRepetition)
+      {
+        rawConfig.DatabasePath = Path.Combine(Application.dataPath,
+          Path.GetDirectoryName(RepetitionPlayer.DatabaseFile) ?? string.Empty);
+        rawConfig.DatabaseName = Path.GetFileName(RepetitionPlayer.DatabaseFile);
+        RepetitionPlayer.OnRepeat += RestartSimulation;
+      }
+
+      Statistics = new StatisticsBridge(rawConfig);
 #else
       Statistics = new StatisticsBridge();
 #endif
-      
+
       ActionProvider = new ActionProvider(Statistics);
     }
 
-    private void Start()
+    public void StartSimulation()
     {
-      for (int i = 0; i < Settings.NumberOfEnvironments; i++)
+      int envNumber = Settings.NumberOfEnvironments;
+      if (RepetitionPlayer.IsRepetition)
+        envNumber = 1;
+
+      for (int i = 0; i < envNumber; i++)
       {
-        var environment = Instantiate(Settings.EnvironmentPrefab);
+        BEnvironment environment = Instantiate(Settings.EnvironmentPrefab);
         environment.Academy = this;
         _environments.Add(environment);
         environment.SessionIndex = _startSimulationCount++;
       }
+    }
+
+    public bool CanContinueSimulation()
+    {
+      return !RepetitionPlayer.IsRepetition;
     }
 
     public void CompleteEpisode(BEnvironment environment)
@@ -63,7 +77,7 @@ namespace Mrnchr.Balancery.Runtime
 
     private void CheckAllSimulationsComplete()
     {
-      if (_endSimulationCount >= Settings.NumberOfSimulations)
+      if (!RepetitionPlayer.IsRepetition && _endSimulationCount >= Settings.NumberOfSimulations)
       {
         foreach (var environment in _environments)
           Destroy(environment.gameObject);
@@ -87,6 +101,18 @@ namespace Mrnchr.Balancery.Runtime
           Statistics.RecordActionValue(agent.Environment.SessionIndex, agent.Environment.TurnIndex, i, value);
         }
       }
+    }
+
+    private void RestartSimulation()
+    {
+      if (_environments.Count > 0)
+        _environments[0].ContinueSimulation();
+    }
+
+    private void OnDestroy()
+    {
+      RepetitionPlayer.OnRepeat -= RestartSimulation;
+      Statistics?.Dispose();
     }
   }
 }

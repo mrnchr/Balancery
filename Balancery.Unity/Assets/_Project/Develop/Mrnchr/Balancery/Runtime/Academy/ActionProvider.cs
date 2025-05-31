@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using Mrnchr.Balancery.Runtime.Statistics;
 using Unity.MLAgents.Actuators;
 using UnityEngine;
 
-namespace Mrnchr.Balancery.Runtime.Repetition
+namespace Mrnchr.Balancery.Runtime.Academy
 {
   public class ActionProvider : IActionProvider
   {
