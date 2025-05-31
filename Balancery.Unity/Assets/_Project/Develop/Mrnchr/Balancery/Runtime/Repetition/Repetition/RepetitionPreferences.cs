@@ -42,7 +42,7 @@ namespace Mrnchr.Balancery.Editor
       RepetitionPlayer.Resume();
     }
 
-    [Button(ButtonSizes.Medium, "\u23e9")]
+    [Button(ButtonSizes.Medium, "Next Turn")]
     [EnableIf(nameof(EnableRepetition))]
     public void NextTurn()
     {

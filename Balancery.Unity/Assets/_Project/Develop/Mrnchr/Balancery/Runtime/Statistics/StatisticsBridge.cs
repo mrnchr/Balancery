@@ -50,15 +50,29 @@ namespace Mrnchr.Balancery.Runtime.Statistics
       Statistics.Export();
     }
 
+    [Conditional("BALANCERY_STATISTICS")]
+    public void RemoveSession(int sessionIndex)
+    {
+      if (RepetitionPlayer.IsRepetition)
+        return;
+      
+      Statistics.DbProvider.RemoveSession(sessionIndex);
+    }
+
+    [Conditional("BALANCERY_STATISTICS")]
+    public void ReplaceSessionNumber(int oldSessionIndex, int newSessionIndex)
+    {
+      if (RepetitionPlayer.IsRepetition)
+        return;
+
+      Statistics.DbProvider.ReplaceSessionNumber(oldSessionIndex, newSessionIndex);
+    }
+
     public List<float> GetActions(int sessionIndex, int turnIndex)
     {
       return
 #if BALANCERY_STATISTICS
-        Statistics.DbProvider.Connection.ActionTable
-          .Where(x => x.SessionNumber == sessionIndex && x.TurnNumber == turnIndex)
-          .OrderBy(x => x.TurnNumber)
-          .Select(x => x.ActionValue)
-          .ToList();
+        Statistics.DbProvider.GetActions(sessionIndex, turnIndex);
 #else
       new List<float>();
 #endif

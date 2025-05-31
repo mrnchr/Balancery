@@ -26,7 +26,7 @@ namespace Mrnchr.Balancery.Statistics.Testing
 
       // Assert.
       var workbook = new XLWorkbook(tableFile);
-      var worksheet = workbook.Worksheet(XLSXExporter.SESSION_SHEET_NAME);
+      var worksheet = workbook.Worksheet(XLSXExporter.SESSIONS_SHEET_NAME);
       Console.WriteLine($"{worksheet.Cell("B2").Value}");
       Assert.IsTrue(worksheet.Cell("B2").Value.ToString() == "10");
 
