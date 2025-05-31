@@ -1,6 +1,6 @@
 ﻿using Unity.MLAgents.Actuators;
 
-namespace Mrnchr.Balancery.Runtime.Repetition
+namespace Mrnchr.Balancery.Runtime.Academy
 {
   public interface IActionProvider
   {
