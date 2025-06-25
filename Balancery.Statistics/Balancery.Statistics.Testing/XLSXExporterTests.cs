@@ -16,10 +16,10 @@ namespace Mrnchr.Balancery.Statistics.Testing
       // Arrange.
       string databaseName = "database.db";
       var tableFile = "table.xlsx";
-      var dbProvider = new DatabaseProvider(new DataOptions()
+      var dbProvider = new SQLiteProvider(new DataOptions()
         .UseSQLite($"Data Source = {databaseName}; Foreign Keys = True"));
       var exporter = new XLSXExporter(dbProvider);
-      dbProvider.RecordMetricValue(1, "Test", 10);
+      dbProvider.RecordSessionMetric(1, "Test", 10);
 
       // Act.
       exporter.Export(tableFile);

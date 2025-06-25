@@ -24,6 +24,15 @@ namespace Mrnchr.Balancery.Runtime.Statistics
     }
 
     [Conditional("BALANCERY_STATISTICS")]
+    public void RecordMetricValue<TType>(int sessionIndex, string metricId, TType value)
+    {
+      if (RepetitionPlayer.IsRepetition)
+        return;
+
+      Statistics.Collector.RecordMetricValue(sessionIndex, metricId, value);
+    }
+
+    [Conditional("BALANCERY_STATISTICS")]
     public void RecordActionValue(int sessionIndex, int turnIndex, int actionIndex, float value)
     {
       if (RepetitionPlayer.IsRepetition)
@@ -33,12 +42,31 @@ namespace Mrnchr.Balancery.Runtime.Statistics
     }
 
     [Conditional("BALANCERY_STATISTICS")]
-    public void RecordTurnValue(int sessionIndex, int turnIndex, string metricId, float value)
+    public void RecordTurnValue<TType>(int sessionIndex, int turnIndex, string metricId, TType value)
     {
       if (RepetitionPlayer.IsRepetition)
         return;
 
       Statistics.Collector.RecordMetricValueToTurn(sessionIndex, turnIndex, metricId, value);
+    }
+
+    [Conditional("BALANCERY_STATISTICS")]
+    public void RecordOptionValue<TType>(int sessionIndex, string optionId, TType value)
+    {
+      if (RepetitionPlayer.IsRepetition)
+        return;
+
+      Statistics.DbProvider.RecordOptionValue(sessionIndex, optionId, value);
+    }
+
+    public TType ReadOptionValue<TType>(int sessionIndex, string optionId)
+    {
+      return
+#if BALANCERY_STATISTICS
+        Statistics.DbProvider.ReadOptionValue<TType>(sessionIndex, optionId);
+#else
+      default(TType);
+#endif
     }
 
     [Conditional("BALANCERY_STATISTICS")]
@@ -55,7 +83,7 @@ namespace Mrnchr.Balancery.Runtime.Statistics
     {
       if (RepetitionPlayer.IsRepetition)
         return;
-      
+
       Statistics.DbProvider.RemoveSession(sessionIndex);
     }
 

@@ -135,7 +135,7 @@ namespace Mrnchr.Balancery.Runtime.Academy
       InitializeFlags(_finishEpisodeFlags);
     }
 
-    public void MakeTurn(BAgent agent)
+    public void MarkMadeTurn(BAgent agent)
     {
       _makeTurnFlags[agent] = true;
       TurnIndex++;

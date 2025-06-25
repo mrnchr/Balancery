@@ -6,21 +6,21 @@ namespace Mrnchr.Balancery.Statistics
   [Serializable]
   public class StatisticsCollector
   {
-    private readonly IDatabaseProvider _dbProvider;
+    private readonly IDataProvider _dbProvider;
     
-    public StatisticsCollector(IDatabaseProvider dbProvider)
+    public StatisticsCollector(IDataProvider dbProvider)
     {
       _dbProvider = dbProvider;
     }
 
-    public void RecordMetricValue(int sessionIndex, string metricId, float value)
+    public void RecordSessionMetric<TType>(int sessionIndex, string metricId, TType value)
     {
-      _dbProvider.RecordMetricValue(sessionIndex, metricId, value);
+      _dbProvider.RecordSessionMetric(sessionIndex, metricId, value);
     }
 
-    public void RecordMetricValueToTurn(int sessionIndex, int turnIndex, string metricId, float value)
+    public void RecordTurnMetric<TType>(int sessionIndex, int turnIndex, string metricId, TType value)
     {
-      _dbProvider.RecordMetricValueToTurn(sessionIndex, turnIndex, metricId, value);
+      _dbProvider.RecordTurnMetric(sessionIndex, turnIndex, metricId, value);
     }
 
     public void RecordActionValue(int sessionIndex, int turnIndex, int actionIndex, float value)
@@ -28,7 +28,7 @@ namespace Mrnchr.Balancery.Statistics
       _dbProvider.RecordActionValue(sessionIndex, turnIndex, actionIndex, value);
     }
 
-    public void RecordOptionValue(int sessionIndex, string optionId, float value)
+    public void RecordOptionValue<TType>(int sessionIndex, string optionId, TType value)
     {
       _dbProvider.RecordOptionValue(sessionIndex, optionId, value);
     }

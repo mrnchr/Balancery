@@ -9,14 +9,14 @@ namespace Mrnchr.Balancery.Statistics
   public class BalanceryStatistics : IDisposable
   {
     private readonly IBalanceryStatisticsConfig _config;
-    private readonly IDatabaseProvider _dbProvider;
+    private readonly IDataProvider _dbProvider;
     private readonly StatisticsCollector _collector;
     private readonly XLSXExporter _exporter;
 
     public IBalanceryStatisticsConfig Config => _config;
     public StatisticsCollector Collector => _collector;
     
-    public IDatabaseProvider DbProvider => _dbProvider;
+    public IDataProvider DbProvider => _dbProvider;
 
     public BalanceryStatistics(IBalanceryStatisticsConfig config)
     {
@@ -25,14 +25,14 @@ namespace Mrnchr.Balancery.Statistics
       if (!Directory.Exists(_config.DatabasePath))
         Directory.CreateDirectory(_config.DatabasePath);
       
-      _dbProvider = new DatabaseProvider(new DataOptions()
-        .UseSQLite($"Data Source = {Path.Combine(_config.DatabasePath, _config.DatabaseName)}; Foreign Keys = True"));
+      _dbProvider = new SQLiteProvider(new DataOptions()
+        .UseSQLite($"Data Source = {Path.Combine(_config.DatabasePath, _config.DatabaseName)}"));
       
       _collector = new StatisticsCollector(_dbProvider);
       _exporter = new XLSXExporter(_dbProvider);
     }
 
-    public BalanceryStatistics(IBalanceryStatisticsConfig config, IDatabaseProvider dbProvider)
+    public BalanceryStatistics(IBalanceryStatisticsConfig config, IDataProvider dbProvider)
     {
       _config = config;
       _dbProvider = dbProvider;

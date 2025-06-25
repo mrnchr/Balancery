@@ -14,6 +14,7 @@ namespace Mrnchr.Balancery.Runtime.Statistics.Configuration
     public string ExportFileTemplatePath = Application.dataPath;
     public string ExportFilePath = Application.dataPath;
 
+#if BALANCERY_STATISTICS
     public IBalanceryStatisticsConfig CreateConfig()
     {
       return CreateConfig(this);
@@ -31,5 +32,6 @@ namespace Mrnchr.Balancery.Runtime.Statistics.Configuration
         ExportFileName = $"{time}.xlsx"
       };
     }
+#endif
   }
 }
