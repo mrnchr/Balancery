@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using ClosedXML.Excel;
-using LinqToDB;
 using Mrnchr.Balancery.Statistics.Database;
 using Mrnchr.Balancery.Statistics.Export;
 using NUnit.Framework;

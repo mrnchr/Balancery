@@ -7,10 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="ClosedXML" Version="0.105.0" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\Balancery.Statistics.Shared\Balancery.Statistics.Shared.csproj" />
     </ItemGroup>
 

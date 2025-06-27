@@ -22,6 +22,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Balancery.Statistics.DataProvider\Balancery.Statistics.DataProvider.csproj" />
+      <ProjectReference Include="..\Balancery.Statistics.Export\Balancery.Statistics.Export.csproj" />
       <ProjectReference Include="..\Balancery.Statistics\Balancery.Statistics.csproj" />
     </ItemGroup>
 

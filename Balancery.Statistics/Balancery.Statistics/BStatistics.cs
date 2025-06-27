@@ -1,8 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Reflection;
 using Mrnchr.Balancery.Statistics.Database;
-using Mrnchr.Balancery.Statistics.Export;
+using Mrnchr.Balancery.Statistics.Utils;
 
 namespace Mrnchr.Balancery.Statistics
 {
@@ -10,43 +9,50 @@ namespace Mrnchr.Balancery.Statistics
   {
     private const string DATA_PROVIDER_ASSEMBLY = "Balancery.Statistics.DataProvider";
     private const string SQLITE_PROVIDER_TYPE = "SQLiteProvider";
+    
+    private const string EXPORTER_ASSEMBLY = "Balancery.Statistics.Export";
+    private const string XLSX_EXPORTER_TYPE = "XLSXExporter";
+    
     private readonly IStatisticsConfig _config;
-    private readonly IDataProvider _dbProvider;
     private readonly BCollector _collector;
-    private readonly XLSXExporter _exporter;
+    
+    private IDataProvider _dbProvider;
+    private IExporter _exporter;
 
     public IStatisticsConfig Config => _config;
     public BCollector Collector => _collector;
-    
+
     public IDataProvider DbProvider => _dbProvider;
 
     public BStatistics(IStatisticsConfig config)
     {
       _config = config;
-      
+
       if (!Directory.Exists(_config.DatabasePath))
         Directory.CreateDirectory(_config.DatabasePath);
 
-      Assembly assembly = Array.Find(AppDomain.CurrentDomain.GetAssemblies(), x => x.GetName().Name == DATA_PROVIDER_ASSEMBLY);
-      if (assembly != null)
-      {
-        Type type = assembly.GetType(SQLITE_PROVIDER_TYPE);
-        if (type != null)
-        {
-          _dbProvider = (IDataProvider)Activator.CreateInstance(type, _config);
-        }
-      }
-      
+      CreateDefaultDataProvider();
+
       _collector = new BCollector(_dbProvider);
-      _exporter = new XLSXExporter(_dbProvider);
+      CreateDefaultExporter();
     }
 
-    public BStatistics(IStatisticsConfig config, IDataProvider dbProvider)
+    private void CreateDefaultDataProvider()
     {
-      _config = config;
-      _dbProvider = dbProvider;
-      _collector = new BCollector(_dbProvider);
-      _exporter = new XLSXExporter(_dbProvider);
+      Type type = TypeUtils.GetType(SQLITE_PROVIDER_TYPE, DATA_PROVIDER_ASSEMBLY);
+      if (type != null)
+      {
+        _dbProvider = (IDataProvider)Activator.CreateInstance(type, _config);
+      }
+    }
+
+    private void CreateDefaultExporter()
+    {
+      Type type = TypeUtils.GetType(XLSX_EXPORTER_TYPE, EXPORTER_ASSEMBLY);
+      if (type != null)
+      {
+        _exporter = (IExporter)Activator.CreateInstance(type, _dbProvider);
+      }
     }
 
     public void Export()
