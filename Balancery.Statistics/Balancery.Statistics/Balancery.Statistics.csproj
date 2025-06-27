@@ -7,10 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="ClosedXML" Version="0.105.0" />
-      <PackageReference Include="linq2db" Version="5.4.1" />
-      <PackageReference Include="SQLite.Interop" Version="1.0.0" />
-      <PackageReference Include="System.Data.SQLite" Version="1.0.119" />
+      <ProjectReference Include="..\Balancery.Statistics.Shared\Balancery.Statistics.Shared.csproj" />
     </ItemGroup>
 
     <Target Name="CopyOnPublish" AfterTargets="Publish">

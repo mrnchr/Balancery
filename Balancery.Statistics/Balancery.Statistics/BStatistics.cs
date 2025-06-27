@@ -1,43 +1,58 @@
 ﻿using System;
 using System.IO;
-using LinqToDB;
 using Mrnchr.Balancery.Statistics.Database;
-using Mrnchr.Balancery.Statistics.Export;
+using Mrnchr.Balancery.Statistics.Utils;
 
 namespace Mrnchr.Balancery.Statistics
 {
-  public class BalanceryStatistics : IDisposable
+  public class BStatistics : IDisposable
   {
-    private readonly IBalanceryStatisticsConfig _config;
-    private readonly IDataProvider _dbProvider;
-    private readonly StatisticsCollector _collector;
-    private readonly XLSXExporter _exporter;
-
-    public IBalanceryStatisticsConfig Config => _config;
-    public StatisticsCollector Collector => _collector;
+    private const string DATA_PROVIDER_ASSEMBLY = "Balancery.Statistics.DataProvider";
+    private const string SQLITE_PROVIDER_TYPE = "SQLiteProvider";
     
+    private const string EXPORTER_ASSEMBLY = "Balancery.Statistics.Export";
+    private const string XLSX_EXPORTER_TYPE = "XLSXExporter";
+    
+    private readonly IStatisticsConfig _config;
+    private readonly BCollector _collector;
+    
+    private IDataProvider _dbProvider;
+    private IExporter _exporter;
+
+    public IStatisticsConfig Config => _config;
+    public BCollector Collector => _collector;
+
     public IDataProvider DbProvider => _dbProvider;
 
-    public BalanceryStatistics(IBalanceryStatisticsConfig config)
+    public BStatistics(IStatisticsConfig config)
     {
       _config = config;
-      
+
       if (!Directory.Exists(_config.DatabasePath))
         Directory.CreateDirectory(_config.DatabasePath);
-      
-      _dbProvider = new SQLiteProvider(new DataOptions()
-        .UseSQLite($"Data Source = {Path.Combine(_config.DatabasePath, _config.DatabaseName)}"));
-      
-      _collector = new StatisticsCollector(_dbProvider);
-      _exporter = new XLSXExporter(_dbProvider);
+
+      CreateDefaultDataProvider();
+
+      _collector = new BCollector(_dbProvider);
+      CreateDefaultExporter();
     }
 
-    public BalanceryStatistics(IBalanceryStatisticsConfig config, IDataProvider dbProvider)
+    private void CreateDefaultDataProvider()
     {
-      _config = config;
-      _dbProvider = dbProvider;
-      _collector = new StatisticsCollector(_dbProvider);
-      _exporter = new XLSXExporter(_dbProvider);
+      Type type = TypeUtils.GetType(SQLITE_PROVIDER_TYPE, DATA_PROVIDER_ASSEMBLY);
+      if (type != null)
+      {
+        _dbProvider = (IDataProvider)Activator.CreateInstance(type, _config);
+      }
+    }
+
+    private void CreateDefaultExporter()
+    {
+      Type type = TypeUtils.GetType(XLSX_EXPORTER_TYPE, EXPORTER_ASSEMBLY);
+      if (type != null)
+      {
+        _exporter = (IExporter)Activator.CreateInstance(type, _dbProvider);
+      }
     }
 
     public void Export()

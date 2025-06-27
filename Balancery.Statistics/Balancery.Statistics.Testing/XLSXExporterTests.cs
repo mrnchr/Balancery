@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using ClosedXML.Excel;
-using LinqToDB;
 using Mrnchr.Balancery.Statistics.Database;
 using Mrnchr.Balancery.Statistics.Export;
 using NUnit.Framework;
@@ -16,8 +15,12 @@ namespace Mrnchr.Balancery.Statistics.Testing
       // Arrange.
       string databaseName = "database.db";
       var tableFile = "table.xlsx";
-      var dbProvider = new SQLiteProvider(new DataOptions()
-        .UseSQLite($"Data Source = {databaseName}; Foreign Keys = True"));
+      IStatisticsConfig config = new StatisticsConfig
+      {
+        DatabasePath = "",
+        DatabaseName = databaseName
+      };
+      var dbProvider = new SQLiteProvider(config);
       var exporter = new XLSXExporter(dbProvider);
       dbProvider.RecordSessionMetric(1, "Test", 10);
 

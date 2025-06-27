@@ -1,15 +1,16 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Mrnchr.Balancery.Statistics.Database;
 
 namespace Mrnchr.Balancery.Statistics
 {
   [Serializable]
-  public class StatisticsCollector
+  public class BCollector
   {
     private readonly IDataProvider _dbProvider;
-    
-    public StatisticsCollector(IDataProvider dbProvider)
+
+    public BCollector(IDataProvider dbProvider)
     {
       _dbProvider = dbProvider;
     }
@@ -18,20 +19,22 @@ namespace Mrnchr.Balancery.Statistics
     {
       _dbProvider.RecordSessionMetric(sessionIndex, metricId, value);
     }
-    
-    public async Task RecordSessionMetricAsync<TType>(int sessionIndex, string metricId, TType value)
+
+    public async Task RecordSessionMetricAsync<TType>(int sessionIndex, string metricId, TType value,
+      CancellationToken token = default(CancellationToken))
     {
-      await _dbProvider.RecordSessionMetricAsync(sessionIndex, metricId, value);
+      await _dbProvider.RecordSessionMetricAsync(sessionIndex, metricId, value, token);
     }
 
     public void RecordTurnMetric<TType>(int sessionIndex, int turnIndex, string metricId, TType value)
     {
       _dbProvider.RecordTurnMetric(sessionIndex, turnIndex, metricId, value);
     }
-    
-    public async Task RecordTurnMetricAsync<TType>(int sessionIndex, int turnIndex, string metricId, TType value)
+
+    public async Task RecordTurnMetricAsync<TType>(int sessionIndex, int turnIndex, string metricId, TType value,
+      CancellationToken token = default(CancellationToken))
     {
-      await _dbProvider.RecordTurnMetricAsync(sessionIndex, turnIndex, metricId, value);
+      await _dbProvider.RecordTurnMetricAsync(sessionIndex, turnIndex, metricId, value, token);
     }
 
     public void RecordActionValue(int sessionIndex, int turnIndex, int actionIndex, float value)
@@ -39,9 +42,10 @@ namespace Mrnchr.Balancery.Statistics
       _dbProvider.RecordActionValue(sessionIndex, turnIndex, actionIndex, value);
     }
 
-    public async Task RecordActionValueAsync(int sessionIndex, int turnIndex, int actionIndex, float value)
+    public async Task RecordActionValueAsync(int sessionIndex, int turnIndex, int actionIndex, float value,
+      CancellationToken token = default(CancellationToken))
     {
-      await _dbProvider.RecordActionValueAsync(sessionIndex, turnIndex, actionIndex, value);
+      await _dbProvider.RecordActionValueAsync(sessionIndex, turnIndex, actionIndex, value, token);
     }
 
     public void RecordOptionValue<TType>(int sessionIndex, string optionId, TType value)
@@ -49,9 +53,10 @@ namespace Mrnchr.Balancery.Statistics
       _dbProvider.RecordOptionValue(sessionIndex, optionId, value);
     }
 
-    public async Task RecordOptionValueAsync<TType>(int sessionIndex, string optionId, TType value)
+    public async Task RecordOptionValueAsync<TType>(int sessionIndex, string optionId, TType value,
+      CancellationToken token = default(CancellationToken))
     {
-      await _dbProvider.RecordOptionValueAsync(sessionIndex, optionId, value);
+      await _dbProvider.RecordOptionValueAsync(sessionIndex, optionId, value, token);
     }
   }
 }
