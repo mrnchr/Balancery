@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using Mrnchr.Balancery.Runtime.Repetition;
 using Mrnchr.Balancery.Runtime.Statistics;
 using Mrnchr.Balancery.Runtime.Statistics.Configuration;
@@ -91,9 +92,9 @@ namespace Mrnchr.Balancery.Runtime.Academy
         for (int i = 0; i < _startedSimulationCount; i++)
         {
           if (!_completedEpisodes.Contains(i))
-            Statistics.RemoveSession(i);
+            _ = Statistics.RemoveSessionAsync(i);
           else if (i != k)
-            Statistics.ReplaceSessionNumber(i, k++);
+            _ = Statistics.ReplaceSessionNumberAsync(i, k++);
           else
             k++;
         }
@@ -111,7 +112,7 @@ namespace Mrnchr.Balancery.Runtime.Academy
           float value = i < actions.ContinuousActions.Length
             ? actions.ContinuousActions[i]
             : actions.DiscreteActions[i - actions.ContinuousActions.Length];
-          Statistics.RecordActionValue(agent.Environment.SessionIndex, agent.Environment.TurnIndex, i, value);
+          _ = Statistics.RecordActionValueAsync(agent.Environment.SessionIndex, agent.Environment.TurnIndex, i, value);
         }
       }
     }
