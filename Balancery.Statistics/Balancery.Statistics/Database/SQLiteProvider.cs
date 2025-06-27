@@ -50,7 +50,7 @@ namespace Mrnchr.Balancery.Statistics.Database
 
     public async Task RecordSessionMetricAsync<TType>(int sessionNumber, string metricName, TType value)
     {
-      SessionMetricData sessionMetric = new SessionMetricData
+      var sessionMetric = new SessionMetricData
       {
         SessionNumber = sessionNumber,
         MetricName = metricName,
@@ -71,12 +71,14 @@ namespace Mrnchr.Balancery.Statistics.Database
 
     public async Task RecordTurnMetricAsync<TType>(int sessionNumber, int turnNumber, string metricName, TType value)
     {
-      _cacheTurnMetric.SessionNumber = sessionNumber;
-      _cacheTurnMetric.TurnNumber = turnNumber;
-      _cacheTurnMetric.MetricName = metricName;
-      ((IData)_cacheTurnMetric).SetValue(value);
-
-      await _connection.InsertOrReplaceAsync(_cacheTurnMetric);
+      var turnMetric = new TurnMetricData
+      {
+        SessionNumber = sessionNumber,
+        TurnNumber = turnNumber,
+        MetricName = metricName
+      };
+      ((IData)turnMetric).SetValue(value);
+      await _connection.InsertOrReplaceAsync(turnMetric);
     }
 
     public void RecordActionValue(int sessionNumber, int turnNumber, int actionIndex, float value)
@@ -91,12 +93,14 @@ namespace Mrnchr.Balancery.Statistics.Database
 
     public async Task RecordActionValueAsync(int sessionNumber, int turnNumber, int actionIndex, float value)
     {
-      _cacheAction.SessionNumber = sessionNumber;
-      _cacheAction.TurnNumber = turnNumber;
-      _cacheAction.ActionIndex = actionIndex;
-      _cacheAction.ActionValue = value;
-
-      await _connection.InsertOrReplaceAsync(_cacheAction);
+      var action = new ActionData
+      {
+        SessionNumber = sessionNumber,
+        TurnNumber = turnNumber,
+        ActionIndex = actionIndex,
+        ActionValue = value
+      };
+      await _connection.InsertOrReplaceAsync(action);
     }
 
     public void RecordOptionValue<TType>(int sessionNumber, string optionName, TType value)
@@ -110,11 +114,13 @@ namespace Mrnchr.Balancery.Statistics.Database
     
     public async Task RecordOptionValueAsync<TType>(int sessionNumber, string optionName, TType value)
     {
-      _cacheStartOption.SessionNumber = sessionNumber;
-      _cacheStartOption.OptionName = optionName;
-      ((IData)_cacheStartOption).SetValue(value);
-
-      await _connection.InsertOrReplaceAsync(_cacheStartOption);
+      var startOption = new StartOptionData
+      {
+        SessionNumber = sessionNumber,
+        OptionName = optionName
+      };
+      ((IData)startOption).SetValue(value);
+      await _connection.InsertOrReplaceAsync(startOption);
     }
 
     public TType ReadOptionValue<TType>(int sessionNumber, string optionName)
