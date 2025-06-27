@@ -82,14 +82,14 @@ namespace Mrnchr.Balancery.Statistics.Testing
       if (!string.IsNullOrWhiteSpace(databasePath) && !Directory.Exists(databasePath))
         Directory.CreateDirectory(databasePath);
 
-      var dbProvider = new DatabaseProvider(new DataOptions()
+      var dbProvider = new SQLiteProvider(new DataOptions()
         .UseSQLite($"Data Source = {combinePath}; Foreign Keys = True"));
 
       // Act.
 
       // Assert.
-      Assert.DoesNotThrow(() => dbProvider.RecordMetricValue(1, "key", 1));
-      Assert.DoesNotThrow(() => dbProvider.RecordMetricValue(1, "key2", 1));
+      Assert.DoesNotThrow(() => dbProvider.RecordSessionMetric(1, "key", 1));
+      Assert.DoesNotThrow(() => dbProvider.RecordSessionMetric(1, "key2", 1));
       Assert.DoesNotThrow(() => dbProvider.RecordActionValue(2, 3, 2, 1));
 
       dbProvider.Dispose();

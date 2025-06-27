@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
+using System.Threading.Tasks;
 using Mrnchr.Balancery.Runtime.Repetition;
 #if BALANCERY_STATISTICS
 using Mrnchr.Balancery.Statistics;
@@ -24,48 +24,110 @@ namespace Mrnchr.Balancery.Runtime.Statistics
     }
 
     [Conditional("BALANCERY_STATISTICS")]
-    public void RecordActionValue(int sessionIndex, int turnIndex, int actionIndex, float value)
+    public void RecordSessionMetric<TType>(int sessionIndex, string metricId, TType value)
     {
-      if (RepetitionPlayer.IsRepetition)
-        return;
+      if (!RepetitionPlayer.IsRepetition)
+        Statistics.Collector.RecordSessionMetric(sessionIndex, metricId, value);
+    }
 
-      Statistics.Collector.RecordActionValue(sessionIndex, turnIndex, actionIndex, value);
+    public async Task RecordSessionMetricAsync<TType>(int sessionIndex, string metricId, TType value)
+    {
+#if BALANCERY_STATISTICS
+      if (!RepetitionPlayer.IsRepetition)
+        await Statistics.Collector.RecordSessionMetricAsync(sessionIndex, metricId, value);
+#endif
     }
 
     [Conditional("BALANCERY_STATISTICS")]
-    public void RecordTurnValue(int sessionIndex, int turnIndex, string metricId, float value)
+    public void RecordActionValue(int sessionIndex, int turnIndex, int actionIndex, float value)
     {
-      if (RepetitionPlayer.IsRepetition)
-        return;
+      if (!RepetitionPlayer.IsRepetition)
+        Statistics.Collector.RecordActionValue(sessionIndex, turnIndex, actionIndex, value);
+    }
 
-      Statistics.Collector.RecordMetricValueToTurn(sessionIndex, turnIndex, metricId, value);
+    public async Task RecordActionValueAsync(int sessionIndex, int turnIndex, int actionIndex, float value)
+    {
+#if BALANCERY_STATISTICS
+      if (!RepetitionPlayer.IsRepetition)
+        await Statistics.Collector.RecordActionValueAsync(sessionIndex, turnIndex, actionIndex, value);
+#endif
+    }
+
+    [Conditional("BALANCERY_STATISTICS")]
+    public void RecordTurnMetric<TType>(int sessionIndex, int turnIndex, string metricId, TType value)
+    {
+      if (!RepetitionPlayer.IsRepetition)
+        Statistics.Collector.RecordTurnMetric(sessionIndex, turnIndex, metricId, value);
+    }
+
+    public async Task RecordTurnMetricAsync<TType>(int sessionIndex, int turnIndex, string metricId, TType value)
+    {
+#if BALANCERY_STATISTICS
+      if (!RepetitionPlayer.IsRepetition)
+        await Statistics.Collector.RecordTurnMetricAsync(sessionIndex, turnIndex, metricId, value);
+#endif
+    }
+
+    [Conditional("BALANCERY_STATISTICS")]
+    public void RecordOptionValue<TType>(int sessionIndex, string optionId, TType value)
+    {
+      if (!RepetitionPlayer.IsRepetition)
+        Statistics.DbProvider.RecordOptionValue(sessionIndex, optionId, value);
+    }
+
+    public async Task RecordOptionValueAsync<TType>(int sessionIndex, string optionId, TType value)
+    {
+#if BALANCERY_STATISTICS
+      if (!RepetitionPlayer.IsRepetition)
+        await Statistics.DbProvider.RecordOptionValueAsync(sessionIndex, optionId, value);
+#endif
+    }
+
+    public TType ReadOptionValue<TType>(int sessionIndex, string optionId)
+    {
+      return
+#if BALANCERY_STATISTICS
+        Statistics.DbProvider.ReadOptionValue<TType>(sessionIndex, optionId);
+#else
+      default(TType);
+#endif
     }
 
     [Conditional("BALANCERY_STATISTICS")]
     public void Export()
     {
-      if (RepetitionPlayer.IsRepetition)
-        return;
-
-      Statistics.Export();
+      if (!RepetitionPlayer.IsRepetition)
+        Statistics.Export();
     }
 
     [Conditional("BALANCERY_STATISTICS")]
     public void RemoveSession(int sessionIndex)
     {
-      if (RepetitionPlayer.IsRepetition)
-        return;
-      
-      Statistics.DbProvider.RemoveSession(sessionIndex);
+      if (!RepetitionPlayer.IsRepetition)
+        Statistics.DbProvider.RemoveSession(sessionIndex);
+    }
+
+    public async Task RemoveSessionAsync(int sessionIndex)
+    {
+#if BALANCERY_STATISTICS
+      if (!RepetitionPlayer.IsRepetition)
+        await Statistics.DbProvider.RemoveSessionAsync(sessionIndex);
+#endif
     }
 
     [Conditional("BALANCERY_STATISTICS")]
     public void ReplaceSessionNumber(int oldSessionIndex, int newSessionIndex)
     {
-      if (RepetitionPlayer.IsRepetition)
-        return;
+      if (!RepetitionPlayer.IsRepetition)
+        Statistics.DbProvider.ReplaceSessionNumber(oldSessionIndex, newSessionIndex);
+    }
 
-      Statistics.DbProvider.ReplaceSessionNumber(oldSessionIndex, newSessionIndex);
+    public async Task ReplaceSessionNumberAsync(int oldSessionIndex, int newSessionIndex)
+    {
+#if BALANCERY_STATISTICS
+      if (!RepetitionPlayer.IsRepetition)
+        await Statistics.DbProvider.ReplaceSessionNumberAsync(oldSessionIndex, newSessionIndex);
+#endif
     }
 
     public List<float> GetActions(int sessionIndex, int turnIndex)

@@ -6,7 +6,6 @@ namespace Mrnchr.Balancery.Statistics
   {
     void Export(string templateFile, string outputPath, string outputFileName);
     void Export(string outputFile);
-    
     void AddProcessor(IExportProcessor processor);
     void RemoveProcessor(IExportProcessor processor);
   }

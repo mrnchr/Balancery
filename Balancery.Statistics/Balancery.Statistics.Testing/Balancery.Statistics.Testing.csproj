@@ -24,8 +24,4 @@
       <ProjectReference Include="..\Balancery.Statistics\Balancery.Statistics.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\Balancery.Statistics\Balancery.Statistics.csproj" />
-    </ItemGroup>
-
 </Project>

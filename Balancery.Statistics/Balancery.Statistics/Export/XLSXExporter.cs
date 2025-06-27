@@ -13,11 +13,11 @@ namespace Mrnchr.Balancery.Statistics.Export
     public const string HORIZONTAL_TURNS_SHEET_NAME = "Horizontal Turns";
     public const string VERTICAL_TURNS_SHEET_NAME = "Vertical Turns";
 
-    private readonly IDatabaseProvider _dbProvider;
+    private readonly IDataProvider _dbProvider;
     
     private readonly List<IExportProcessor> _processors = new List<IExportProcessor>();
 
-    public XLSXExporter(IDatabaseProvider dbProvider)
+    public XLSXExporter(IDataProvider dbProvider)
     {
       _dbProvider = dbProvider;
     }
@@ -42,8 +42,9 @@ namespace Mrnchr.Balancery.Statistics.Export
       DataTable turns = _dbProvider.GetTurnsTable();
       CopyTableToWorksheet(workbook, HORIZONTAL_TURNS_SHEET_NAME, turns);
 
+      var exportData = new XLSXExportData { Workbook = workbook };
       foreach (IExportProcessor processor in _processors)
-        processor.Process(workbook);
+        processor.Process(exportData);
 
       workbook.SaveAs(outputFile);
     }

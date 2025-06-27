@@ -2,7 +2,6 @@
 using Mrnchr.Balancery.Runtime.Repetition;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
-using UnityEngine;
 
 namespace Mrnchr.Balancery.Runtime.Academy
 {
@@ -11,9 +10,8 @@ namespace Mrnchr.Balancery.Runtime.Academy
     [NonSerialized]
     public bool WasFirstEpisodeStarted;
 
+    [NonSerialized]
     public bool WaitMadeTurn;
-
-    private Coroutine _routine;
 
     public BEnvironment Environment { get; set; }
 
@@ -61,7 +59,7 @@ namespace Mrnchr.Balancery.Runtime.Academy
       OnActionExecuted(actions);
 
       if (WaitMadeTurn)
-        Environment.MakeTurn(this);
+        Environment.MarkMadeTurn(this);
     }
 
     public virtual void OnActionExecuted(ActionBuffers actions)
