@@ -6,11 +6,21 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Balancery.Statistics.Shared\Balancery.Statistics.Shared.csproj" />
+        <ProjectReference Include="..\Balancery.Statistics.Shared\Balancery.Statistics.Shared.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="ClosedXML" Version="0.105.0" />
+        <PackageReference Include="ClosedXML" Version="0.105.0"/>
     </ItemGroup>
+
+    <Target Name="CopyOnPublish" AfterTargets="Publish">
+        <MakeDir Directories="$(SolutionPath)\..\..\Balancery.Unity\Assets\Packages\"/>
+        <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(SolutionPath)\..\..\Balancery.Unity\Assets\Packages\"/>
+    </Target>
+
+    <Target Name="CopyOnPublish" AfterTargets="Publish">
+        <MakeDir Directories="$(SolutionPath)\..\..\Balancery.Unity\Assets\Artifacts\"/>
+        <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(SolutionPath)\..\Artifacts\"/>
+    </Target>
 
 </Project>

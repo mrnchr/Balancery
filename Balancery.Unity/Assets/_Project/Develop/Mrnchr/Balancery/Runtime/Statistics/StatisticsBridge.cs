@@ -13,14 +13,14 @@ namespace Mrnchr.Balancery.Runtime.Statistics
   public class StatisticsBridge : IDisposable
   {
 #if BALANCERY_STATISTICS
-    private readonly BalanceryStatistics _statistics;
-    public BalanceryStatistics Statistics => _statistics;
+    private readonly BStatistics _statistics;
+    public BStatistics Statistics => _statistics;
 #endif
 
-    public StatisticsBridge(IBalanceryStatisticsConfig config)
+    public StatisticsBridge(IStatisticsConfig config)
     {
 #if BALANCERY_STATISTICS
-      _statistics = new BalanceryStatistics(config);
+      _statistics = new BStatistics(config);
 #endif
     }
 
