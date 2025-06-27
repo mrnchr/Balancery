@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Balancery.Statistics.Shared;
 using Mrnchr.Balancery.Statistics.Database;
 using Mrnchr.Balancery.Statistics.Utils;
 
@@ -13,16 +14,24 @@ namespace Mrnchr.Balancery.Statistics
     private const string EXPORTER_ASSEMBLY = "Balancery.Statistics.Export";
     private const string XLSX_EXPORTER_TYPE = "XLSXExporter";
     
+    private readonly DataProviderShell _dataProviderShell = new DataProviderShell();
     private readonly IStatisticsConfig _config;
     private readonly BCollector _collector;
-    
-    private IDataProvider _dbProvider;
+
     private IExporter _exporter;
 
     public IStatisticsConfig Config => _config;
     public BCollector Collector => _collector;
 
-    public IDataProvider DbProvider => _dbProvider;
+    public IDataProvider DataProvider
+    {
+      get => _dataProviderShell.DataProvider;
+      set
+      {
+        DisposeDataProvider();
+        _dataProviderShell.DataProvider = value;
+      }
+    }
 
     public BStatistics(IStatisticsConfig config)
     {
@@ -33,7 +42,7 @@ namespace Mrnchr.Balancery.Statistics
 
       CreateDefaultDataProvider();
 
-      _collector = new BCollector(_dbProvider);
+      _collector = new BCollector(_dataProviderShell);
       CreateDefaultExporter();
     }
 
@@ -42,7 +51,7 @@ namespace Mrnchr.Balancery.Statistics
       Type type = TypeUtils.GetType(SQLITE_PROVIDER_TYPE, DATA_PROVIDER_ASSEMBLY);
       if (type != null)
       {
-        _dbProvider = (IDataProvider)Activator.CreateInstance(type, _config);
+        DataProvider = (IDataProvider)Activator.CreateInstance(type, _config);
       }
     }
 
@@ -51,7 +60,7 @@ namespace Mrnchr.Balancery.Statistics
       Type type = TypeUtils.GetType(XLSX_EXPORTER_TYPE, EXPORTER_ASSEMBLY);
       if (type != null)
       {
-        _exporter = (IExporter)Activator.CreateInstance(type, _dbProvider);
+        _exporter = (IExporter)Activator.CreateInstance(type, _dataProviderShell);
       }
     }
 
@@ -62,7 +71,13 @@ namespace Mrnchr.Balancery.Statistics
 
     public void Dispose()
     {
-      _dbProvider?.Dispose();
+      DisposeDataProvider();
+    }
+
+    private void DisposeDataProvider()
+    {
+      _dataProviderShell.DataProvider?.Dispose();
+      _dataProviderShell.DataProvider = null;
     }
   }
 }

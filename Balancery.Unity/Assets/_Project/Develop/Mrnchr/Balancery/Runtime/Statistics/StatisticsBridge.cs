@@ -76,7 +76,7 @@ namespace Mrnchr.Balancery.Runtime.Statistics
     public void RecordOptionValue<TType>(int sessionIndex, string optionId, TType value)
     {
       if (!RepetitionPlayer.IsRepetition)
-        Statistics.DbProvider.RecordOptionValue(sessionIndex, optionId, value);
+        Statistics.DataProvider.RecordOptionValue(sessionIndex, optionId, value);
     }
 
     public async Task RecordOptionValueAsync<TType>(int sessionIndex, string optionId, TType value,
@@ -84,7 +84,7 @@ namespace Mrnchr.Balancery.Runtime.Statistics
     {
 #if BALANCERY_STATISTICS
       if (!RepetitionPlayer.IsRepetition)
-        await Statistics.DbProvider.RecordOptionValueAsync(sessionIndex, optionId, value, token);
+        await Statistics.DataProvider.RecordOptionValueAsync(sessionIndex, optionId, value, token);
 #endif
     }
 
@@ -92,7 +92,7 @@ namespace Mrnchr.Balancery.Runtime.Statistics
     {
       return
 #if BALANCERY_STATISTICS
-        Statistics.DbProvider.ReadOptionValue<TType>(sessionIndex, optionId);
+        Statistics.DataProvider.ReadOptionValue<TType>(sessionIndex, optionId);
 #else
       default(TType);
 #endif
@@ -109,14 +109,14 @@ namespace Mrnchr.Balancery.Runtime.Statistics
     public void RemoveSession(int sessionIndex)
     {
       if (!RepetitionPlayer.IsRepetition)
-        Statistics.DbProvider.RemoveSession(sessionIndex);
+        Statistics.DataProvider.RemoveSession(sessionIndex);
     }
 
     public async Task RemoveSessionAsync(int sessionIndex, CancellationToken token = default(CancellationToken))
     {
 #if BALANCERY_STATISTICS
       if (!RepetitionPlayer.IsRepetition)
-        await Statistics.DbProvider.RemoveSessionAsync(sessionIndex, token);
+        await Statistics.DataProvider.RemoveSessionAsync(sessionIndex, token);
 #endif
     }
 
@@ -124,7 +124,7 @@ namespace Mrnchr.Balancery.Runtime.Statistics
     public void ReplaceSessionNumber(int oldSessionIndex, int newSessionIndex)
     {
       if (!RepetitionPlayer.IsRepetition)
-        Statistics.DbProvider.ReplaceSessionNumber(oldSessionIndex, newSessionIndex);
+        Statistics.DataProvider.ReplaceSessionNumber(oldSessionIndex, newSessionIndex);
     }
 
     public async Task ReplaceSessionNumberAsync(int oldSessionIndex, int newSessionIndex,
@@ -132,7 +132,7 @@ namespace Mrnchr.Balancery.Runtime.Statistics
     {
 #if BALANCERY_STATISTICS
       if (!RepetitionPlayer.IsRepetition)
-        await Statistics.DbProvider.ReplaceSessionNumberAsync(oldSessionIndex, newSessionIndex, token);
+        await Statistics.DataProvider.ReplaceSessionNumberAsync(oldSessionIndex, newSessionIndex, token);
 #endif
     }
 
@@ -140,7 +140,7 @@ namespace Mrnchr.Balancery.Runtime.Statistics
     {
       return
 #if BALANCERY_STATISTICS
-        Statistics.DbProvider.GetActions(sessionIndex, turnIndex);
+        Statistics.DataProvider.GetActions(sessionIndex, turnIndex);
 #else
       new List<float>();
 #endif

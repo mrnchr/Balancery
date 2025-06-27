@@ -2,6 +2,7 @@
 using System.Data;
 using System.Globalization;
 using System.IO;
+using Balancery.Statistics.Shared;
 using ClosedXML.Excel;
 using Mrnchr.Balancery.Statistics.Database;
 
@@ -12,14 +13,15 @@ namespace Mrnchr.Balancery.Statistics.Export
     public const string SESSIONS_SHEET_NAME = "Sessions";
     public const string HORIZONTAL_TURNS_SHEET_NAME = "Horizontal Turns";
     public const string VERTICAL_TURNS_SHEET_NAME = "Vertical Turns";
-
-    private readonly IDataProvider _dbProvider;
     
+    private readonly DataProviderShell _dataProviderShell;
     private readonly List<IExportProcessor> _processors = new List<IExportProcessor>();
+    
+    private IDataProvider DataProvider => _dataProviderShell.DataProvider;
 
-    public XLSXExporter(IDataProvider dbProvider)
+    public XLSXExporter(DataProviderShell dataProviderShell)
     {
-      _dbProvider = dbProvider;
+      _dataProviderShell = dataProviderShell;
     }
 
     public void Export(string templateFile, string outputPath, string outputFileName)
@@ -36,10 +38,10 @@ namespace Mrnchr.Balancery.Statistics.Export
     public void Export(string outputFile)
     {
       XLWorkbook workbook = File.Exists(outputFile) ? new XLWorkbook(outputFile) : new XLWorkbook();
-      DataTable sessions = _dbProvider.GetMetricsTable();
+      DataTable sessions = DataProvider.GetMetricsTable();
       CopyTableToWorksheet(workbook, SESSIONS_SHEET_NAME, sessions);
 
-      DataTable turns = _dbProvider.GetTurnsTable();
+      DataTable turns = DataProvider.GetTurnsTable();
       CopyTableToWorksheet(workbook, HORIZONTAL_TURNS_SHEET_NAME, turns);
 
       var exportData = new XLSXExportData { Workbook = workbook };
