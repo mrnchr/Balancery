@@ -25,11 +25,16 @@ namespace Mrnchr.Balancery.Statistics.Benchmark
       var databaseName = "database.db";
       string combinePath = Path.Combine(_databasePath, databaseName);
       Console.WriteLine($"Database path: {Path.GetFullPath(combinePath)}");
+      IStatisticsConfig config = new StatisticsConfig
+      {
+        DatabasePath = _databasePath,
+        DatabaseName = databaseName
+      };
+      
       if (!string.IsNullOrWhiteSpace(_databasePath) && !Directory.Exists(_databasePath))
         Directory.CreateDirectory(_databasePath);
 
-      _dbProvider = new SQLiteProvider(new DataOptions()
-        .UseSQLite($"Data Source = {combinePath}"));
+      _dbProvider = new SQLiteProvider(config);
 
       _marks = new string[COUNT];
       for (int i = 0; i < COUNT; i++)

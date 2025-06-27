@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,9 +21,10 @@ namespace Mrnchr.Balancery.Statistics.Database
 
     public StatisticsDatabaseConnection Connection => _connection;
 
-    public SQLiteProvider(DataOptions options)
+    public SQLiteProvider(IStatisticsConfig config)
     {
-      _connection = new StatisticsDatabaseConnection(options);
+      _connection = new StatisticsDatabaseConnection(new DataOptions()
+        .UseSQLite($"Data Source = {Path.Combine(config.DatabasePath, config.DatabaseName)}"));
       _cacheSessionMetric = new SessionMetricData();
       _cacheTurnMetric = new TurnMetricData();
       _cacheAction = new ActionData();

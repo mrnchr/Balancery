@@ -6,11 +6,11 @@ using Mrnchr.Balancery.Statistics.Database;
 namespace Mrnchr.Balancery.Statistics
 {
   [Serializable]
-  public class StatisticsCollector
+  public class BCollector
   {
     private readonly IDataProvider _dbProvider;
 
-    public StatisticsCollector(IDataProvider dbProvider)
+    public BCollector(IDataProvider dbProvider)
     {
       _dbProvider = dbProvider;
     }

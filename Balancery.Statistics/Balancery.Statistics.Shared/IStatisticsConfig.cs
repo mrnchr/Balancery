@@ -1,6 +1,6 @@
 ﻿namespace Mrnchr.Balancery.Statistics
 {
-  public class BalanceryStatisticsConfig : IBalanceryStatisticsConfig
+  public interface IStatisticsConfig
   {
     public string DatabasePath { get; set; }
     public string DatabaseName { get; set; }

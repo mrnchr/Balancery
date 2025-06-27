@@ -2,7 +2,6 @@
 using System.IO;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
-using LinqToDB;
 using Mrnchr.Balancery.Statistics.Database;
 
 namespace Mrnchr.Balancery.Statistics.Benchmark
@@ -10,7 +9,7 @@ namespace Mrnchr.Balancery.Statistics.Benchmark
   [MemoryDiagnoser]
   public class AddMetricsSyncAndAsyncBenchmark
   {
-    private const int COUNT = 100;
+    private const int COUNT = 1000;
 
     private SQLiteProvider _dbProvider;
     private string _databasePath;
@@ -24,12 +23,17 @@ namespace Mrnchr.Balancery.Statistics.Benchmark
       var databaseName = "database.db";
       string combinePath = Path.Combine(_databasePath, databaseName);
       Console.WriteLine($"Database path: {Path.GetFullPath(combinePath)}");
+      IStatisticsConfig config = new StatisticsConfig
+      {
+        DatabasePath = _databasePath,
+        DatabaseName = databaseName
+      };
+      
       if (!string.IsNullOrWhiteSpace(_databasePath) && !Directory.Exists(_databasePath))
         Directory.CreateDirectory(_databasePath);
 
-      _dbProvider = new SQLiteProvider(new DataOptions()
-        .UseSQLite($"Data Source = {combinePath}"));
-
+      _dbProvider = new SQLiteProvider(config);
+      
       _tasks = new Task[COUNT];
       for (int i = 0; i < COUNT; i++)
       {
@@ -48,6 +52,8 @@ namespace Mrnchr.Balancery.Statistics.Benchmark
       {
         _dbProvider.RemoveSession(i);
       }
+
+      Array.Clear(_tasks);
     }
 
     [GlobalCleanup]
@@ -67,12 +73,12 @@ namespace Mrnchr.Balancery.Statistics.Benchmark
       }
     }
 
-    [Benchmark(OperationsPerInvoke = COUNT)]
+    [Benchmark]
     public void AddExplicitAsync()
     {
       for (int i = 0; i < COUNT; i++)
       {
-        _ = _dbProvider.RecordSessionMetricAsync(i, _marks[i], i);
+        _tasks[i] = _dbProvider.RecordSessionMetricAsync(i, _marks[i], i);
       }
     }
 

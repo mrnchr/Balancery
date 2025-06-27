@@ -19,7 +19,7 @@ namespace Mrnchr.Balancery.Statistics.Testing
     {
       // Assert.
       Assert.DoesNotThrow(() =>
-        new BalanceryStatistics(new BalanceryStatisticsConfig { DatabasePath = "", DatabaseName = "" }));
+        new BStatistics(new StatisticsConfig { DatabasePath = "", DatabaseName = "" }));
     }
 
     [Test]
@@ -79,11 +79,16 @@ namespace Mrnchr.Balancery.Statistics.Testing
       var databaseName = "database.db";
       string combinePath = Path.Combine(databasePath, databaseName);
       Console.WriteLine($"{combinePath}");
+      IStatisticsConfig config = new StatisticsConfig
+      {
+        DatabasePath = databasePath,
+        DatabaseName = databaseName
+      };
+      
       if (!string.IsNullOrWhiteSpace(databasePath) && !Directory.Exists(databasePath))
         Directory.CreateDirectory(databasePath);
 
-      var dbProvider = new SQLiteProvider(new DataOptions()
-        .UseSQLite($"Data Source = {combinePath}; Foreign Keys = True"));
+      var dbProvider = new SQLiteProvider(config);
 
       // Act.
 

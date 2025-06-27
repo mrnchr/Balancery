@@ -6,6 +6,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Balancery.Statistics.Testin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Balancery.Statistics.Benchmark", "Balancery.Statistics.Benchmark\Balancery.Statistics.Benchmark.csproj", "{6780E052-ADD1-44F7-A226-DCD012735AD2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Balancery.Statistics.DataProvider", "Balancery.Statistics.DataProvider\Balancery.Statistics.DataProvider.csproj", "{8063B73F-02ED-4B89-A1CD-AD31BBD3E0BC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Balancery.Statistics.Shared", "Balancery.Statistics.Shared\Balancery.Statistics.Shared.csproj", "{7597B7ED-FFD2-4BE4-AC15-D61B12AD543B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +28,13 @@ Global
 		{6780E052-ADD1-44F7-A226-DCD012735AD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6780E052-ADD1-44F7-A226-DCD012735AD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6780E052-ADD1-44F7-A226-DCD012735AD2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8063B73F-02ED-4B89-A1CD-AD31BBD3E0BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8063B73F-02ED-4B89-A1CD-AD31BBD3E0BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8063B73F-02ED-4B89-A1CD-AD31BBD3E0BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8063B73F-02ED-4B89-A1CD-AD31BBD3E0BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7597B7ED-FFD2-4BE4-AC15-D61B12AD543B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7597B7ED-FFD2-4BE4-AC15-D61B12AD543B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7597B7ED-FFD2-4BE4-AC15-D61B12AD543B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7597B7ED-FFD2-4BE4-AC15-D61B12AD543B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
