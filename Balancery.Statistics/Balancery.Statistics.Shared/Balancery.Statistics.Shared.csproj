@@ -2,8 +2,17 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
-        <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>disable</Nullable>
     </PropertyGroup>
+
+    <Target Name="CopyOnPublish" AfterTargets="Publish">
+        <MakeDir Directories="$(SolutionPath)\..\..\Balancery.Unity\Assets\Packages\"/>
+        <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(SolutionPath)\..\..\Balancery.Unity\Assets\Packages\"/>
+    </Target>
+
+    <Target Name="CopyOnPublish" AfterTargets="Publish">
+        <MakeDir Directories="$(SolutionPath)\..\..\Balancery.Unity\Assets\Artifacts\"/>
+        <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(SolutionPath)\..\Artifacts\"/>
+    </Target>
 
 </Project>

@@ -31,7 +31,7 @@ namespace Mrnchr.Balancery.Runtime.Academy
     private void Awake()
     {
 #if BALANCERY_STATISTICS
-      IBalanceryStatisticsConfig rawConfig = StatisticsConfig.CreateConfig();
+      IStatisticsConfig rawConfig = StatisticsConfig.CreateConfig();
       if (RepetitionPlayer.IsRepetition)
       {
         rawConfig.DatabasePath = Path.Combine(Application.dataPath,

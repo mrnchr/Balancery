@@ -15,15 +15,15 @@ namespace Mrnchr.Balancery.Runtime.Statistics.Configuration
     public string ExportFilePath = Application.dataPath;
 
 #if BALANCERY_STATISTICS
-    public IBalanceryStatisticsConfig CreateConfig()
+    public IStatisticsConfig CreateConfig()
     {
       return CreateConfig(this);
     }
 
-    public static IBalanceryStatisticsConfig CreateConfig(BalanceryStatisticsConfigAsset configAsset)
+    public static IStatisticsConfig CreateConfig(BalanceryStatisticsConfigAsset configAsset)
     {
       var time = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture);
-      return new BalanceryStatisticsConfig
+      return new StatisticsConfig
       {
         DatabasePath = configAsset.DatabasePath,
         DatabaseName = $"{time}.db",
