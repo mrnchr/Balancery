@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 
 namespace Mrnchr.Balancery.Statistics.Utils
@@ -14,7 +15,10 @@ namespace Mrnchr.Balancery.Statistics.Utils
 
     public static Type GetType(string typeName, string assemblyName)
     {
-      return Array.Find(GetAssemblies(), x => x.GetName().Name == assemblyName)?.GetType(typeName);
+      return GetAssemblies()
+        .FirstOrDefault(x => x.GetName().Name == assemblyName)
+        ?.GetTypes()
+        .FirstOrDefault(x => x.Name == typeName);
     }
   }
 }

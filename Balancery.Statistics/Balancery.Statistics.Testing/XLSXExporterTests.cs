@@ -18,8 +18,8 @@ namespace Mrnchr.Balancery.Statistics.Testing
       var tableFile = "table.xlsx";
       IStatisticsConfig config = new StatisticsConfig
       {
-        DatabasePath = "",
-        DatabaseName = databaseName
+        DataFilePath = "",
+        DataFileName = databaseName
       };
       var dataProvider = new SQLiteProvider(config);
       var exporter = new XLSXExporter(new DataProviderShell { DataProvider = dataProvider });

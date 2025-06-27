@@ -24,7 +24,7 @@ namespace Mrnchr.Balancery.Statistics.Database
     public SQLiteProvider(IStatisticsConfig config)
     {
       _connection = new StatisticsDatabaseConnection(new DataOptions()
-        .UseSQLite($"Data Source = {Path.Combine(config.DatabasePath, config.DatabaseName)}"));
+        .UseSQLite($"Data Source = {Path.Combine(config.DataFilePath, config.DataFileName)}"));
       _cacheSessionMetric = new SessionMetricData();
       _cacheTurnMetric = new TurnMetricData();
       _cacheAction = new ActionData();
