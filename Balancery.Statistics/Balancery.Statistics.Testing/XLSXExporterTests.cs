@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Balancery.Statistics.Shared;
 using ClosedXML.Excel;
 using Mrnchr.Balancery.Statistics.Database;
 using Mrnchr.Balancery.Statistics.Export;
@@ -17,12 +18,12 @@ namespace Mrnchr.Balancery.Statistics.Testing
       var tableFile = "table.xlsx";
       IStatisticsConfig config = new StatisticsConfig
       {
-        DatabasePath = "",
-        DatabaseName = databaseName
+        DataFilePath = "",
+        DataFileName = databaseName
       };
-      var dbProvider = new SQLiteProvider(config);
-      var exporter = new XLSXExporter(dbProvider);
-      dbProvider.RecordSessionMetric(1, "Test", 10);
+      var dataProvider = new SQLiteProvider(config);
+      var exporter = new XLSXExporter(new DataProviderShell { DataProvider = dataProvider });
+      dataProvider.RecordSessionMetric(1, "Test", 10);
 
       // Act.
       exporter.Export(tableFile);
@@ -33,7 +34,7 @@ namespace Mrnchr.Balancery.Statistics.Testing
       Console.WriteLine($"{worksheet.Cell("B2").Value}");
       Assert.IsTrue(worksheet.Cell("B2").Value.ToString() == "10");
 
-      dbProvider.Dispose();
+      dataProvider.Dispose();
       File.Delete(databaseName);
       File.Delete(tableFile);
     }

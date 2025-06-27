@@ -34,9 +34,9 @@ namespace Mrnchr.Balancery.Runtime.Academy
       IStatisticsConfig rawConfig = StatisticsConfig.CreateConfig();
       if (RepetitionPlayer.IsRepetition)
       {
-        rawConfig.DatabasePath = Path.Combine(Application.dataPath,
+        rawConfig.DataFilePath = Path.Combine(Application.dataPath,
           Path.GetDirectoryName(RepetitionPlayer.DatabaseFile) ?? string.Empty);
-        rawConfig.DatabaseName = Path.GetFileName(RepetitionPlayer.DatabaseFile);
+        rawConfig.DataFileName = Path.GetFileName(RepetitionPlayer.DatabaseFile);
         RepetitionPlayer.OnRepeat += RestartSimulation;
       }
 

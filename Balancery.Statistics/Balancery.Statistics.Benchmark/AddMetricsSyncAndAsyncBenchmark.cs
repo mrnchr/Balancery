@@ -25,8 +25,8 @@ namespace Mrnchr.Balancery.Statistics.Benchmark
       Console.WriteLine($"Database path: {Path.GetFullPath(combinePath)}");
       IStatisticsConfig config = new StatisticsConfig
       {
-        DatabasePath = _databasePath,
-        DatabaseName = databaseName
+        DataFilePath = _databasePath,
+        DataFileName = databaseName
       };
       
       if (!string.IsNullOrWhiteSpace(_databasePath) && !Directory.Exists(_databasePath))

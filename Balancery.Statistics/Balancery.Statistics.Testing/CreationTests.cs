@@ -3,6 +3,7 @@ using System.IO;
 using LinqToDB;
 using LinqToDB.Data;
 using Mrnchr.Balancery.Statistics.Database;
+using Mrnchr.Balancery.Statistics.Export;
 using NUnit.Framework;
 
 namespace Mrnchr.Balancery.Statistics.Testing
@@ -17,9 +18,25 @@ namespace Mrnchr.Balancery.Statistics.Testing
     [Test]
     public void WhenCreateBalanceryStatisticsThenDatabaseShouldBeConnected()
     {
+      TurnMetricData turnMetricData = new TurnMetricData();
+      XLSXExportData xlsxExportData = new XLSXExportData();
+      string dataFilePath = "Database";
+      string dataFileName = "database.db";
+      Console.WriteLine($"{Path.GetFullPath(Path.Combine(dataFilePath, dataFileName))}");
+      BStatistics statistics = null;
+
+      if (!string.IsNullOrWhiteSpace(dataFilePath) && !Directory.Exists(dataFilePath))
+        Directory.CreateDirectory(dataFilePath);
+      
       // Assert.
-      Assert.DoesNotThrow(() =>
-        new BStatistics(new StatisticsConfig { DatabasePath = "", DatabaseName = "" }));
+      Assert.DoesNotThrow(() => statistics =
+        new BStatistics(new StatisticsConfig { DataFilePath = dataFilePath, DataFileName = dataFileName }));
+      Assert.IsNotNull(statistics.DataProvider);
+      Assert.IsNotNull(statistics.Exporter);
+      
+      statistics.Dispose();
+      if (!string.IsNullOrWhiteSpace(dataFilePath))
+        Directory.Delete(dataFilePath, true);
     }
 
     [Test]
@@ -81,10 +98,10 @@ namespace Mrnchr.Balancery.Statistics.Testing
       Console.WriteLine($"{combinePath}");
       IStatisticsConfig config = new StatisticsConfig
       {
-        DatabasePath = databasePath,
-        DatabaseName = databaseName
+        DataFilePath = databasePath,
+        DataFileName = databaseName
       };
-      
+
       if (!string.IsNullOrWhiteSpace(databasePath) && !Directory.Exists(databasePath))
         Directory.CreateDirectory(databasePath);
 
