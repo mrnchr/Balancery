@@ -14,10 +14,10 @@ namespace Mrnchr.Balancery.Statistics.Database
     private const string COLUMN_TURN_NAME = "Turn Number";
 
     private readonly StatisticsDatabaseConnection _connection;
-    private readonly SessionMetricData _cacheSessionMetric;
-    private readonly TurnMetricData _cacheTurnMetric;
-    private readonly ActionData _cacheAction;
-    private readonly StartOptionData _cacheStartOption;
+    private readonly SessionMetricData _cachedSessionMetric;
+    private readonly TurnMetricData _cachedTurnMetric;
+    private readonly ActionData _cachedAction;
+    private readonly StartOptionData _cachedStartOption;
 
     public StatisticsDatabaseConnection Connection => _connection;
 
@@ -25,10 +25,10 @@ namespace Mrnchr.Balancery.Statistics.Database
     {
       _connection = new StatisticsDatabaseConnection(new DataOptions()
         .UseSQLite($"Data Source = {Path.Combine(config.DataFilePath, config.DataFileName)}"));
-      _cacheSessionMetric = new SessionMetricData();
-      _cacheTurnMetric = new TurnMetricData();
-      _cacheAction = new ActionData();
-      _cacheStartOption = new StartOptionData();
+      _cachedSessionMetric = new SessionMetricData();
+      _cachedTurnMetric = new TurnMetricData();
+      _cachedAction = new ActionData();
+      _cachedStartOption = new StartOptionData();
     }
 
     public void Dispose()
@@ -44,86 +44,82 @@ namespace Mrnchr.Balancery.Statistics.Database
 
     public void RecordSessionMetric<TType>(int sessionNumber, string metricName, TType value)
     {
-      _cacheSessionMetric.SessionNumber = sessionNumber;
-      _cacheSessionMetric.MetricName = metricName;
-      ((IData)_cacheSessionMetric).SetValue(value);
+      _cachedSessionMetric.SessionNumber = sessionNumber;
+      _cachedSessionMetric.MetricName = metricName;
+      ((IData)_cachedSessionMetric).SetValue(value);
 
-      _connection.InsertOrReplace(_cacheSessionMetric);
+      _connection.RecordSession(_cachedSessionMetric);
     }
 
-    public async Task RecordSessionMetricAsync<TType>(int sessionNumber, string metricName, TType value, CancellationToken token = default(CancellationToken))
+    public async Task RecordSessionMetricAsync<TType>(int sessionNumber, string metricName, TType value,
+      CancellationToken token = default(CancellationToken))
     {
-      var sessionMetric = new SessionMetricData
-      {
-        SessionNumber = sessionNumber,
-        MetricName = metricName,
-      };
-      ((IData)sessionMetric).SetValue(value);
-      await _connection.InsertOrReplaceAsync(sessionMetric, token: token);
+      _cachedSessionMetric.SessionNumber = sessionNumber;
+      _cachedSessionMetric.MetricName = metricName;
+      ((IData)_cachedSessionMetric).SetValue(value);
+
+      await _connection.RecordSessionAsync(_cachedSessionMetric, token);
     }
 
     public void RecordTurnMetric<TType>(int sessionNumber, int turnNumber, string metricName, TType value)
     {
-      _cacheTurnMetric.SessionNumber = sessionNumber;
-      _cacheTurnMetric.TurnNumber = turnNumber;
-      _cacheTurnMetric.MetricName = metricName;
-      ((IData)_cacheTurnMetric).SetValue(value);
+      _cachedTurnMetric.SessionNumber = sessionNumber;
+      _cachedTurnMetric.TurnNumber = turnNumber;
+      _cachedTurnMetric.MetricName = metricName;
+      ((IData)_cachedTurnMetric).SetValue(value);
 
-      _connection.InsertOrReplace(_cacheTurnMetric);
+      _connection.RecordTurn(_cachedTurnMetric);
     }
 
-    public async Task RecordTurnMetricAsync<TType>(int sessionNumber, int turnNumber, string metricName, TType value, CancellationToken token = default(CancellationToken))
+    public async Task RecordTurnMetricAsync<TType>(int sessionNumber, int turnNumber, string metricName, TType value,
+      CancellationToken token = default(CancellationToken))
     {
-      var turnMetric = new TurnMetricData
-      {
-        SessionNumber = sessionNumber,
-        TurnNumber = turnNumber,
-        MetricName = metricName
-      };
-      ((IData)turnMetric).SetValue(value);
-      await _connection.InsertOrReplaceAsync(turnMetric, token: token);
+      _cachedTurnMetric.SessionNumber = sessionNumber;
+      _cachedTurnMetric.TurnNumber = turnNumber;
+      _cachedTurnMetric.MetricName = metricName;
+      ((IData)_cachedTurnMetric).SetValue(value);
+      
+      await _connection.RecordTurnAsync(_cachedTurnMetric, token);
     }
 
     public void RecordActionValue(int sessionNumber, int turnNumber, int actionIndex, float value)
     {
-      _cacheAction.SessionNumber = sessionNumber;
-      _cacheAction.TurnNumber = turnNumber;
-      _cacheAction.ActionIndex = actionIndex;
-      _cacheAction.ActionValue = value;
+      _cachedAction.SessionNumber = sessionNumber;
+      _cachedAction.TurnNumber = turnNumber;
+      _cachedAction.ActionIndex = actionIndex;
+      _cachedAction.ActionValue = value;
 
-      _connection.InsertOrReplace(_cacheAction);
+      _connection.RecordAction(_cachedAction);
     }
 
-    public async Task RecordActionValueAsync(int sessionNumber, int turnNumber, int actionIndex, float value, CancellationToken token = default(CancellationToken))
+    public async Task RecordActionValueAsync(int sessionNumber, int turnNumber, int actionIndex, float value,
+      CancellationToken token = default(CancellationToken))
     {
-      var action = new ActionData
-      {
-        SessionNumber = sessionNumber,
-        TurnNumber = turnNumber,
-        ActionIndex = actionIndex,
-        ActionValue = value
-      };
-      await _connection.InsertOrReplaceAsync(action, token: token);
+      _cachedAction.SessionNumber = sessionNumber;
+      _cachedAction.TurnNumber = turnNumber;
+      _cachedAction.ActionIndex = actionIndex;
+      _cachedAction.ActionValue = value;
+
+      await _connection.RecordActionAsync(_cachedAction, token);
     }
 
     public void RecordOptionValue<TType>(int sessionNumber, string optionName, TType value)
     {
-      _cacheStartOption.SessionNumber = sessionNumber;
-      _cacheStartOption.OptionName = optionName;
-      ((IData)_cacheStartOption).SetValue(value);
+      _cachedStartOption.SessionNumber = sessionNumber;
+      _cachedStartOption.OptionName = optionName;
+      ((IData)_cachedStartOption).SetValue(value);
 
-      _connection.InsertOrReplace(_cacheStartOption);
+      _connection.RecordOption(_cachedStartOption);
     }
-    
-    public async Task RecordOptionValueAsync<TType>(int sessionNumber, string optionName, TType value, CancellationToken token = default(CancellationToken))
+
+    public async Task RecordOptionValueAsync<TType>(int sessionNumber, string optionName, TType value,
+      CancellationToken token = default(CancellationToken))
     {
-      var startOption = new StartOptionData
-      {
-        SessionNumber = sessionNumber,
-        OptionName = optionName
-      };
-      ((IData)startOption).SetValue(value);
-      await _connection.InsertOrReplaceAsync(startOption, token: token);
+      _cachedStartOption.SessionNumber = sessionNumber;
+      _cachedStartOption.OptionName = optionName;
+      ((IData)_cachedStartOption).SetValue(value);
+      
+      await _connection.RecordOptionAsync(_cachedStartOption, token);
     }
 
     public TType ReadOptionValue<TType>(int sessionNumber, string optionName)
@@ -153,7 +149,8 @@ namespace Mrnchr.Balancery.Statistics.Database
         .Set(x => x.SessionNumber, newSessionNumber).Update();
     }
 
-    public async Task ReplaceSessionNumberAsync(int oldSessionNumber, int newSessionNumber, CancellationToken token = default(CancellationToken))
+    public async Task ReplaceSessionNumberAsync(int oldSessionNumber, int newSessionNumber,
+      CancellationToken token = default(CancellationToken))
     {
       Task<int> sessionTask = _connection.SessionMetricTable.Where(x => x.SessionNumber == oldSessionNumber)
         .Set(x => x.SessionNumber, newSessionNumber).UpdateAsync(token: token);
@@ -161,10 +158,10 @@ namespace Mrnchr.Balancery.Statistics.Database
         .Set(x => x.SessionNumber, newSessionNumber).UpdateAsync(token: token);
       Task<int> actionTask = _connection.ActionTable.Where(x => x.SessionNumber == oldSessionNumber)
         .Set(x => x.SessionNumber, newSessionNumber).UpdateAsync(token: token);
-      
+
       await Task.WhenAll(sessionTask, turnTask, actionTask);
     }
-    
+
     public void RemoveSession(int sessionNumber)
     {
       _connection.SessionMetricTable.Where(x => x.SessionNumber == sessionNumber).Delete();
@@ -175,11 +172,15 @@ namespace Mrnchr.Balancery.Statistics.Database
 
     public async Task RemoveSessionAsync(int sessionNumber, CancellationToken token = default(CancellationToken))
     {
-      Task<int> sessionTask = _connection.SessionMetricTable.Where(x => x.SessionNumber == sessionNumber).DeleteAsync(token: token);
-      Task<int> turnTask = _connection.TurnMetricTable.Where(x => x.SessionNumber == sessionNumber).DeleteAsync(token: token);
-      Task<int> actionTask = _connection.ActionTable.Where(x => x.SessionNumber == sessionNumber).DeleteAsync(token: token);
-      Task<int> optionTask = _connection.StartOptionTable.Where(x => x.SessionNumber == sessionNumber).DeleteAsync(token: token);
-      
+      Task<int> sessionTask = _connection.SessionMetricTable.Where(x => x.SessionNumber == sessionNumber)
+        .DeleteAsync(token: token);
+      Task<int> turnTask = _connection.TurnMetricTable.Where(x => x.SessionNumber == sessionNumber)
+        .DeleteAsync(token: token);
+      Task<int> actionTask = _connection.ActionTable.Where(x => x.SessionNumber == sessionNumber)
+        .DeleteAsync(token: token);
+      Task<int> optionTask = _connection.StartOptionTable.Where(x => x.SessionNumber == sessionNumber)
+        .DeleteAsync(token: token);
+
       await Task.WhenAll(sessionTask, turnTask, actionTask, optionTask);
     }
 

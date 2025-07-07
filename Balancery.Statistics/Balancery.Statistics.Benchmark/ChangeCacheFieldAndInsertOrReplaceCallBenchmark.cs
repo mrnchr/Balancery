@@ -7,9 +7,10 @@ using Mrnchr.Balancery.Statistics.Database;
 namespace Mrnchr.Balancery.Statistics.Benchmark
 {
   [MemoryDiagnoser]
+  [IterationTime(100)]
   public class ChangeCacheFieldAndInsertOrReplaceCallBenchmark
   {
-    private const int COUNT = 100;
+    private const int COUNT = 1;
 
     private readonly SessionMetricData _cacheSessionMetric = new SessionMetricData();
 
@@ -69,7 +70,7 @@ namespace Mrnchr.Balancery.Statistics.Benchmark
         Directory.Delete(_databasePath, true);
     }
 
-    [Benchmark(OperationsPerInvoke = COUNT)]
+    // [Benchmark(OperationsPerInvoke = COUNT)]
     public void ChangeCacheField()
     {
       for (int i = 0; i < COUNT; i++)
@@ -78,7 +79,7 @@ namespace Mrnchr.Balancery.Statistics.Benchmark
       }
     }
 
-    [Benchmark(OperationsPerInvoke = COUNT)]
+    // [Benchmark(OperationsPerInvoke = COUNT)]
     public void ChangeCacheFieldWithoutValue()
     {
       for (int i = 0; i < COUNT; i++)
@@ -87,12 +88,21 @@ namespace Mrnchr.Balancery.Statistics.Benchmark
       }
     }
 
-    [Benchmark(OperationsPerInvoke = COUNT)]
+    // [Benchmark(OperationsPerInvoke = COUNT)]
     public void InsertOrReplaceCall()
     {
       for (int i = 0; i < COUNT; i++)
       {
         _dbProvider.Connection.InsertOrReplace(_metrics[i]);
+      }
+    }
+    
+    [Benchmark(OperationsPerInvoke = COUNT)]
+    public void ReportAction()
+    {
+      for (int i = 0; i < COUNT; i++)
+      {
+        _dbProvider.Connection.RecordSession(_metrics[i]);
       }
     }
 

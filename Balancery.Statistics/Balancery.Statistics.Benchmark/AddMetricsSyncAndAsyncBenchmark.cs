@@ -1,15 +1,20 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Engines;
 using Mrnchr.Balancery.Statistics.Database;
 
 namespace Mrnchr.Balancery.Statistics.Benchmark
 {
   [MemoryDiagnoser]
+  [IterationTime(100)]
   public class AddMetricsSyncAndAsyncBenchmark
   {
-    private const int COUNT = 1000;
+    private const int ITERATIONS = 1;
+    private const int REPEAT = 1;
+    private const int COUNT = REPEAT * ITERATIONS;
 
     private SQLiteProvider _dbProvider;
     private string _databasePath;
@@ -28,12 +33,12 @@ namespace Mrnchr.Balancery.Statistics.Benchmark
         DataFilePath = _databasePath,
         DataFileName = databaseName
       };
-      
+
       if (!string.IsNullOrWhiteSpace(_databasePath) && !Directory.Exists(_databasePath))
         Directory.CreateDirectory(_databasePath);
 
       _dbProvider = new SQLiteProvider(config);
-      
+
       _tasks = new Task[COUNT];
       for (int i = 0; i < COUNT; i++)
       {
@@ -64,28 +69,22 @@ namespace Mrnchr.Balancery.Statistics.Benchmark
         Directory.Delete(_databasePath, true);
     }
 
-    // [Benchmark(OperationsPerInvoke = COUNT)]
+    [Benchmark(OperationsPerInvoke = ITERATIONS)]
     public void Add()
     {
       for (int i = 0; i < COUNT; i++)
       {
-        _dbProvider.RecordSessionMetric(i, _marks[i], i);
+        _dbProvider.RecordActionValue(i, i, i, i);
       }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = ITERATIONS)]
     public void AddExplicitAsync()
     {
       for (int i = 0; i < COUNT; i++)
       {
-        _tasks[i] = _dbProvider.RecordSessionMetricAsync(i, _marks[i], i);
+        _tasks[i] = _dbProvider.RecordActionValueAsync(i, i, i, i);
       }
-    }
-
-    // [Benchmark(OperationsPerInvoke = COUNT)]
-    public void AddImplicitAsync()
-    {
-      Task.WaitAll(_tasks);
     }
   }
 }

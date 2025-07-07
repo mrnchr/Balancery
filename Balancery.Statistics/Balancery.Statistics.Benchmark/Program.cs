@@ -7,7 +7,7 @@ namespace Mrnchr.Balancery.Statistics.Benchmark
   {
     public static void Main(string[] args)
     {
-      BenchmarkRunner.Run<AddMetricsSyncAndAsyncBenchmark>(
+      BenchmarkRunner.Run<ChangeCacheFieldAndInsertOrReplaceCallBenchmark>(
         ManualConfig.Create(DefaultConfig.Instance)
           .WithOptions(ConfigOptions.DisableOptimizationsValidator)
       );

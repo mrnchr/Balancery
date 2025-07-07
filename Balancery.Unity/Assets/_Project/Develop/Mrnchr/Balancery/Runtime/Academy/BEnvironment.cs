@@ -67,7 +67,7 @@ namespace Mrnchr.Balancery.Runtime.Academy
 
     private IEnumerator MakeDecisionRoutine()
     {
-      while (RepetitionPlayer.IsRepetition)
+      while (true)
       {
         float speed = RepetitionPlayer.SimulationSpeed;
         yield return new WaitForSeconds(speed != 0 ? 1 / speed : 0);
@@ -84,7 +84,7 @@ namespace Mrnchr.Balancery.Runtime.Academy
     {
       _startEpisodeFlags[agent] = true;
 
-      if (CheckAll(_startEpisodeFlags) && (Academy.CanContinueSimulation() || !_wasFirstEpisodeStarted))
+      if (CheckAll(_startEpisodeFlags) && (!RepetitionPlayer.IsRepetition || !_wasFirstEpisodeStarted))
       {
         _wasFirstEpisodeStarted = true;
         StartEpisode();
@@ -103,7 +103,7 @@ namespace Mrnchr.Balancery.Runtime.Academy
     public void MarkReadyToFinish(BAgent agent)
     {
       _finishEpisodeFlags[agent] = true;
-
+      
       if (CheckAll(_finishEpisodeFlags))
         ClearAndFinishEpisode();
     }
@@ -111,7 +111,7 @@ namespace Mrnchr.Balancery.Runtime.Academy
     private void ClearAndFinishEpisode()
     {
       ClearRoutine();
-      if (!Academy.CanContinueSimulation())
+      if (RepetitionPlayer.IsRepetition)
         return;
         
       FinishEpisode();

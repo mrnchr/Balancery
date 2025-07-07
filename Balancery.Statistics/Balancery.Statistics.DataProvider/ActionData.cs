@@ -1,4 +1,5 @@
-﻿using LinqToDB.Mapping;
+﻿using System.Data.Common;
+using LinqToDB.Mapping;
 
 namespace Mrnchr.Balancery.Statistics.Database
 {
@@ -16,5 +17,13 @@ namespace Mrnchr.Balancery.Statistics.Database
 
     [Column("action_value")]
     public float ActionValue { get; set; }
+
+    public void PrepareCommand(DbCommand command)
+    {
+      command.Parameters[0].Value = SessionNumber;
+      command.Parameters[1].Value = TurnNumber;
+      command.Parameters[2].Value = ActionIndex;
+      command.Parameters[3].Value = ActionValue;
+    }
   }
 }

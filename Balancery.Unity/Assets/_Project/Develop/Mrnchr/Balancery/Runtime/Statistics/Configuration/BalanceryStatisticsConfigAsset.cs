@@ -19,20 +19,15 @@ namespace Mrnchr.Balancery.Runtime.Statistics.Configuration
 #if BALANCERY_STATISTICS
     public IStatisticsConfig CreateConfig()
     {
-      return CreateConfig(this);
-    }
-
-    public static IStatisticsConfig CreateConfig(BalanceryStatisticsConfigAsset configAsset)
-    {
       var time = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture);
       return new StatisticsConfig
       {
-        CustomDataProvider = configAsset.CustomDataProvider,
-        DataFilePath = configAsset.DatabasePath,
+        CustomDataProvider = CustomDataProvider,
+        DataFilePath = DatabasePath,
         DataFileName = $"{time}.db",
-        CustomExport = configAsset.CustomExport,
-        ExportFileTemplatePath = configAsset.UseTemplate ? configAsset.ExportFileTemplatePath : "",
-        ExportFilePath = configAsset.ExportFilePath,
+        CustomExport = CustomExport,
+        ExportFileTemplatePath = UseTemplate ? ExportFileTemplatePath : "",
+        ExportFilePath = ExportFilePath,
         ExportFileName = $"{time}.xlsx"
       };
     }

@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 using Mrnchr.Balancery.Runtime.Repetition;
 using Mrnchr.Balancery.Runtime.Statistics;
 using Mrnchr.Balancery.Runtime.Statistics.Configuration;
 using Mrnchr.Balancery.Statistics;
 using Unity.MLAgents.Actuators;
+using Unity.Profiling;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -13,6 +13,8 @@ namespace Mrnchr.Balancery.Runtime.Academy
 {
   public class BAcademy : MonoBehaviour
   {
+    private static ProfilerMarker _profilerMarker = new ProfilerMarker("RecordActionValue");
+    
     private readonly List<BEnvironment> _environments = new List<BEnvironment>();
     private readonly List<int> _completedEpisodes = new List<int>();
     private int _startedSimulationCount;
@@ -63,11 +65,6 @@ namespace Mrnchr.Balancery.Runtime.Academy
       }
     }
 
-    public bool CanContinueSimulation()
-    {
-      return !RepetitionPlayer.IsRepetition;
-    }
-
     public void CompleteEpisode(BEnvironment environment)
     {
       OnEpisodeComplete?.Invoke(environment);
@@ -112,7 +109,12 @@ namespace Mrnchr.Balancery.Runtime.Academy
           float value = i < actions.ContinuousActions.Length
             ? actions.ContinuousActions[i]
             : actions.DiscreteActions[i - actions.ContinuousActions.Length];
-          _ = Statistics.RecordActionValueAsync(agent.Environment.SessionIndex, agent.Environment.TurnIndex, i, value);
+#if UNITY_EDITOR
+          using (_profilerMarker.Auto())
+#endif
+          {
+            _ = Statistics.RecordActionValueAsync(agent.Environment.SessionIndex, agent.Environment.TurnIndex, i, value);
+          }
         }
       }
     }

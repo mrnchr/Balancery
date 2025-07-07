@@ -2,11 +2,20 @@
 using Mrnchr.Balancery.Runtime.Repetition;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
+#if UNITY_EDITOR
+using Unity.Profiling;
+#endif
 
 namespace Mrnchr.Balancery.Runtime.Academy
 {
   public class BAgent : Agent
   {
+#if UNITY_EDITOR
+    private static ProfilerMarker _recordActionProfiler = new ProfilerMarker("RecordActions");
+    private static ProfilerMarker _markMadeTurnProfiler = new ProfilerMarker("MarkMadeTurn");
+    private static ProfilerMarker _onActionExecutedProfiler = new ProfilerMarker("OnActionExecuted");
+#endif
+
     [NonSerialized]
     public bool WasFirstEpisodeStarted;
 
@@ -17,6 +26,7 @@ namespace Mrnchr.Balancery.Runtime.Academy
 
     protected override void Awake()
     {
+      Environment = GetComponentInParent<BEnvironment>();
       if (RepetitionPlayer.IsRepetition)
       {
         if (TryGetComponent(out DecisionRequester requester))
@@ -49,17 +59,38 @@ namespace Mrnchr.Balancery.Runtime.Academy
 
     public sealed override void OnActionReceived(ActionBuffers actions)
     {
-      Environment.Academy.RecordActions(this, actions);
-
       if (RepetitionPlayer.IsRepetition)
+      {
         Environment.Academy.ActionProvider.InsertActions(RepetitionPlayer.SessionIndex, Environment.TurnIndex,
           ref actions);
+      }
+      else
+      {
+#if UNITY_EDITOR
+        using (_recordActionProfiler.Auto())
+#endif
+        {
+          Environment.Academy.RecordActions(this, actions);
+        }
+      }
 
       WaitMadeTurn = true;
-      OnActionExecuted(actions);
+#if UNITY_EDITOR
+      using (_onActionExecutedProfiler.Auto())
+#endif
+      {
+        OnActionExecuted(actions);
+      }
 
       if (WaitMadeTurn)
-        Environment.MarkMadeTurn(this);
+      {
+#if UNITY_EDITOR
+        using (_markMadeTurnProfiler.Auto())
+#endif
+        {
+          Environment.MarkMadeTurn(this);
+        }
+      }
     }
 
     public virtual void OnActionExecuted(ActionBuffers actions)
