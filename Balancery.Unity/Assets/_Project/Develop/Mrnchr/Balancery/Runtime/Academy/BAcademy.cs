@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using Mrnchr.Balancery.Runtime.Repetition;
 using Mrnchr.Balancery.Runtime.Statistics;
 using Mrnchr.Balancery.Runtime.Statistics.Configuration;
-using Mrnchr.Balancery.Statistics;
 using Unity.MLAgents.Actuators;
 using Unity.Profiling;
 using UnityEngine;
@@ -14,14 +12,15 @@ namespace Mrnchr.Balancery.Runtime.Academy
   public class BAcademy : MonoBehaviour
   {
     private static ProfilerMarker _profilerMarker = new ProfilerMarker("RecordActionValue");
-    
+
     private readonly List<BEnvironment> _environments = new List<BEnvironment>();
     private readonly List<int> _completedEpisodes = new List<int>();
-    private int _startedSimulationCount;
-    private int _completedSimulationCount;
+
+    public int _startedSimulationCount;
+    public int _completedSimulationCount;
 
     public BAcademySettings Settings;
-    public BalanceryStatisticsConfigAsset StatisticsConfig;
+    public BStatisticsAsset StatisticsConfig;
 
     public UnityAction<BEnvironment> OnEpisodeComplete;
 
@@ -48,6 +47,10 @@ namespace Mrnchr.Balancery.Runtime.Academy
 #endif
 
       ActionProvider = new ActionProvider(Statistics);
+
+      Statistics.IsEnabled = StatisticsConfig.EnableStatistics;
+      Statistics.IsRepetition = RepetitionPlayer.IsRepetition;
+      Statistics.IsLearning = Unity.MLAgents.Academy.Instance.IsCommunicatorOn;
     }
 
     public void StartSimulation()
@@ -77,7 +80,8 @@ namespace Mrnchr.Balancery.Runtime.Academy
 
     private void CheckAllSimulationsComplete()
     {
-      if (!RepetitionPlayer.IsRepetition && _completedSimulationCount >= Settings.NumberOfSimulations)
+      if (!Statistics.IsRepetition && !Statistics.IsLearning
+        && _completedSimulationCount >= Settings.NumberOfSimulations)
       {
         foreach (var environment in _environments)
           Destroy(environment.gameObject);
@@ -113,7 +117,8 @@ namespace Mrnchr.Balancery.Runtime.Academy
           using (_profilerMarker.Auto())
 #endif
           {
-            _ = Statistics.RecordActionValueAsync(agent.Environment.SessionIndex, agent.Environment.TurnIndex, i, value);
+            _ = Statistics.RecordActionValueAsync(agent.Environment.SessionIndex, agent.Environment.TurnIndex, i,
+              value);
           }
         }
       }
@@ -123,6 +128,13 @@ namespace Mrnchr.Balancery.Runtime.Academy
     {
       if (_environments.Count > 0)
         _environments[0].ContinueSimulation();
+    }
+
+    private void Update()
+    {
+      Statistics.IsEnabled = StatisticsConfig.EnableStatistics;
+      Statistics.IsRepetition = RepetitionPlayer.IsRepetition;
+      Statistics.IsLearning = Unity.MLAgents.Academy.Instance.IsCommunicatorOn;
     }
 
     private void OnDestroy()

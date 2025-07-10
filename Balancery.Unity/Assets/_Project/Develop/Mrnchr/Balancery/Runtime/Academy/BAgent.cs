@@ -64,15 +64,6 @@ namespace Mrnchr.Balancery.Runtime.Academy
         Environment.Academy.ActionProvider.InsertActions(RepetitionPlayer.SessionIndex, Environment.TurnIndex,
           ref actions);
       }
-      else
-      {
-#if UNITY_EDITOR
-        using (_recordActionProfiler.Auto())
-#endif
-        {
-          Environment.Academy.RecordActions(this, actions);
-        }
-      }
 
       WaitMadeTurn = true;
 #if UNITY_EDITOR
@@ -84,6 +75,16 @@ namespace Mrnchr.Balancery.Runtime.Academy
 
       if (WaitMadeTurn)
       {
+        if (!RepetitionPlayer.IsRepetition)
+        {
+#if UNITY_EDITOR
+          using (_recordActionProfiler.Auto())
+#endif
+          {
+            Environment.Academy.RecordActions(this, actions);
+          }
+        }
+
 #if UNITY_EDITOR
         using (_markMadeTurnProfiler.Auto())
 #endif

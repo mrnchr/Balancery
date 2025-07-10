@@ -7,14 +7,16 @@ using UnityEngine;
 namespace Mrnchr.Balancery.Runtime.Statistics.Configuration
 {
   [CreateAssetMenu(menuName = CAC.PROJECT_MENU + "StatisticsConfig", fileName = "BalanceryStatisticsConfig")]
-  public class BalanceryStatisticsConfigAsset : ScriptableObject
+  public class BStatisticsAsset : ScriptableObject
   {
+    public bool EnableStatistics = true;
+      
     public bool CustomDataProvider;
     public string DatabasePath = Path.Combine(Application.dataPath, "../Balancery");
     public bool CustomExport;
     public bool UseTemplate;
     public string ExportFileTemplatePath = Application.dataPath;
-    public string ExportFilePath = Application.dataPath;
+    public string ExportFilePath = Path.Combine(Application.dataPath, "../Balancery");
 
 #if BALANCERY_STATISTICS
     public IStatisticsConfig CreateConfig()

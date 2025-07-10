@@ -69,9 +69,13 @@ namespace Mrnchr.Balancery.Runtime.Academy
     {
       while (true)
       {
-        float speed = RepetitionPlayer.SimulationSpeed;
-        yield return new WaitForSeconds(speed != 0 ? 1 / speed : 0);
+        int currentTurn = TurnIndex;
         NextTurn();
+        while (currentTurn == TurnIndex)
+        {
+          float speed = RepetitionPlayer.SimulationSpeed;
+          yield return new WaitForSeconds(speed != 0 ? 1 / speed : 0);
+        }
       }
     }
 
@@ -80,12 +84,31 @@ namespace Mrnchr.Balancery.Runtime.Academy
       _agents[TurnIndex % 2].RequestDecision();
     }
 
+    public virtual void OnStart()
+    {
+    }
+
+    public virtual void OnEpisodeStarted()
+    {
+    }
+
+    public virtual void OnTurnStarted()
+    {
+    }
+
+    public virtual void OnEpisodeFinished()
+    {
+    }
+
     public void MarkReadyToStart(BAgent agent)
     {
       _startEpisodeFlags[agent] = true;
 
       if (CheckAll(_startEpisodeFlags) && (!RepetitionPlayer.IsRepetition || !_wasFirstEpisodeStarted))
       {
+        if (!_wasFirstEpisodeStarted)
+          OnStart();
+        
         _wasFirstEpisodeStarted = true;
         StartEpisode();
       }
@@ -93,10 +116,14 @@ namespace Mrnchr.Balancery.Runtime.Academy
 
     private void StartEpisode()
     {
+      InitializeFlags(_startEpisodeFlags);
+      OnEpisodeStarted();
+      
       foreach (BAgent agent in _agents)
         agent.StartEpisode();
+
+      OnTurnStarted();
         
-      InitializeFlags(_startEpisodeFlags);
       RestartRoutine();
     }
 
@@ -126,6 +153,8 @@ namespace Mrnchr.Balancery.Runtime.Academy
     private void FinishEpisode()
     {
       Academy.CompleteEpisode(this);
+      
+      OnEpisodeFinished(); 
 
       foreach (BAgent agent in _agents)
         agent.FinishEpisode();
@@ -141,7 +170,10 @@ namespace Mrnchr.Balancery.Runtime.Academy
       TurnIndex++;
 
       if (CheckAll(_makeTurnFlags))
+      {
         InitializeFlags(_makeTurnFlags);
+        OnTurnStarted();
+      }
     }
 
     private void InitializeFlags(Dictionary<BAgent, bool> flags)
