@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using Mrnchr.Balancery.Runtime.Repetition;
 using Mrnchr.Balancery.Runtime.Statistics;
 using Mrnchr.Balancery.Runtime.Statistics.Configuration;
+using Mrnchr.Balancery.Statistics;
+using TriInspector;
 using Unity.MLAgents.Actuators;
 using Unity.Profiling;
 using UnityEngine;
@@ -28,6 +31,29 @@ namespace Mrnchr.Balancery.Runtime.Academy
     public IActionProvider ActionProvider { get; set; }
 
     public int StartedSimulationCount => _startedSimulationCount;
+
+    [Button("Complete Simulations")]
+    public void CompleteSimulations()
+    {
+      foreach (var environment in _environments)
+        Destroy(environment.gameObject);
+
+      _environments.Clear();
+      _completedSimulationCount = 0;
+
+      int k = 0;
+      for (int i = 0; i < _startedSimulationCount; i++)
+      {
+        if (!_completedEpisodes.Contains(i))
+          _ = Statistics.RemoveSessionAsync(i);
+        else if (i != k)
+          _ = Statistics.ReplaceSessionNumberAsync(i, k++);
+        else
+          k++;
+      }
+
+      Statistics.Export();
+    }
 
     private void Awake()
     {
